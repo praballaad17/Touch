@@ -17,7 +17,7 @@ export default function ToggleBar({ show, onClose, user, loggedInUser }) {
                 </div>
                 <ul>
                     <li className="toggle-sidebar__item">
-                        <Link className="toggle-sidebar__link" to={`/${user?.username}`} aria-label="Dashboard">
+                        <Link className="toggle-sidebar__link" to={`/user/${user?.username}`} aria-label="Dashboard">
                             <span className="toggle-sidebar__link--icon">
                                 <FontAwesomeIcon icon={faUser} /></span>
                             <span className="toggle-sidebar__link--text">Profile</span>
