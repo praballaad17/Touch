@@ -6,10 +6,12 @@ import LoggedInUserContext from '../../context/logged-in-user'
 import { deletePostById } from '../../services/postServices'
 import usePhotos from '../../hooks/use-photos'
 import { DASHBOARD } from '../../constants/routes'
+import TimeLineContext from '../../context/timeline'
 
 export default function PostModal({ open, content, onClose, setProfile, photosCollection }) {
     const [profileImg, setProfileImg] = useState()
     const { user } = useContext(LoggedInUserContext)
+    const { posts, setPosts } = useContext(TimeLineContext)
     const { pathname } = useLocation()
 
     if (!open) return null
@@ -23,16 +25,32 @@ export default function PostModal({ open, content, onClose, setProfile, photosCo
         // }
     }
 
+    const notLikedPost = () => {
+        localStorage.setItem("dontLikePost", JSON.stringify({ postId: content._id, author: content.author }))
+        setPosts(posts.filter(item => item._id != content._id))
+        onClose()
+    }
+
     const deletePost = () => {
+        if (pathname == "/") {
+            setPosts(posts.filter(item => item._id != content._id))
+            // window.location = pathname
+        }
+        else
+            setPosts({ photosCollection: photosCollection.filter(item => item._id != content._id) })
         deletePostById(content._id).then(() => {
 
+
+        }).catch(e => {
+            alert("Error while deleting the Post, generally check your internet");
+            console.log(e, content);
             if (pathname == "/") {
-                window.location = pathname
+                setPosts(prevPost => [...prevPost, content])
+                // window.location = pathname
             }
             else
-                setProfile({ photosCollection: photosCollection.filter(item => item._id != content._id) })
-        }).catch(e => {
-            console.log(e);
+                setPosts({ photosCollection: photosCollection.push(content) })
+
         })
     }
 
@@ -41,10 +59,11 @@ export default function PostModal({ open, content, onClose, setProfile, photosCo
             <div className="modal-layout" onClick={onClose}></div>
             <div className="modal-box">
                 <ul className="modal-box__list">
-                    {content.author != user.username && <li className="modal-box__item" onClick={unfollow} >Unfollow</li>}
                     <li className="modal-box__item" ><Link target="_blanck" to={`/user/${content?.author}`} >Share</Link></li>
-                    {content.author == user.username && < li className="modal-box__item" onClick={deletePost} >Delete Post</li>}
-                    <li className="modal-box__item" onClick={onClose}>Cencel</li>
+                    {content.author != user.username && <li className="modal-box__item u-text-red-bold" onClick={unfollow} >Unfollow</li>}
+                    {content.author == user.username && < li className="modal-box__item u-text-red-bold" onClick={deletePost} >Delete Post</li>}
+                    {content.author != user.username && <li className="modal-box__item u-text-red-bold" onClick={notLikedPost} >I don't link this Post</li>}
+                    <li className="modal-box__item" onClick={onClose}>Cancel</li>
                 </ul>
             </div>
         </>,

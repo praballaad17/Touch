@@ -10,7 +10,7 @@ export const getUserByUsername = async (usernameOrEmail) => {
         const response = await axios.get(`${apiEndpoint}/username/${usernameOrEmail}`);
         return response.data;
     } catch (err) {
-        throw new Error(err.response.data.error);
+        console.log(err.response?.data.error);
     }
 }
 
@@ -22,7 +22,7 @@ export const searchUser = async (usernameOrname, pageNumber, limit, cancel) => {
         });
         return response.data;
     } catch (err) {
-        throw new Error(err.response.data.error);
+        console.log(err.response?.data.error);
     }
 }
 
@@ -33,7 +33,7 @@ export const updateProfileImg = async (username, profileImg) => {
         );
         return response.data;
     } catch (err) {
-        throw new Error(err.response.data.error);
+        console.log(err.response?.data.error);
     }
 };
 
@@ -42,7 +42,7 @@ export const removeProfileImg = async (username, profileImg) => {
         const response = await axios.delete(`${apiEndpoint}/profile-img/${username}`);
         return response.data;
     } catch (err) {
-        throw new Error(err.response.data.error);
+        console.log(err.response?.data.error);
     }
 };
 
@@ -51,7 +51,7 @@ export const getuserDisplayImgs = async (username) => {
         const response = await axios.get(`${apiEndpoint}/display-imgs/${username}`);
         return response.data;
     } catch (err) {
-        console.log(err.response.data.error);
+        console.log(err.response?.data.error);
     }
 };
 
@@ -60,7 +60,7 @@ export const getusersFollowing = async (usernameOrEmail) => {
         const response = await axios.get(`${apiEndpoint}/username/following/${usernameOrEmail}`);
         return response.data;
     } catch (err) {
-        throw new Error(err.response.data.error);
+        console.log(err.response?.data.error);
     }
 }
 
@@ -69,7 +69,7 @@ export const getusersFollowers = async (usernameOrEmail) => {
         const response = await axios.get(`${apiEndpoint}/username/followers/${usernameOrEmail}`);
         return response.data;
     } catch (err) {
-        throw new Error(err.response.data.error);
+        console.log(err.response?.data.error);
     }
 }
 

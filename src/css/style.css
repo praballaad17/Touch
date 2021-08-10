@@ -149,6 +149,16 @@ body {
     .u-margin-bottom-big {
       margin-bottom: 5rem !important; } }
 
+.u-opacity-50 {
+  opacity: 50%; }
+
+.u-text-blue {
+  color: blue; }
+
+.u-text-red-bold {
+  color: red;
+  font-weight: bold; }
+
 .u-margin-bottom-medium {
   margin-bottom: 4rem !important; }
   @media (max-width: 56.25em) {
@@ -377,6 +387,11 @@ body {
   animation: moveInButton 0.5s 0.75s;
   animation-fill-mode: backwards; }
 
+.btn-login {
+  background-color: blue;
+  color: #fff;
+  width: -webkit-fill-available; }
+
 .btn-text:link, .btn-text:visited {
   font-size: 1.6rem;
   color: #28b485;
@@ -553,6 +568,7 @@ body {
       max-width: 90vw !important; } }
 
 .search-result {
+  background-color: #fff;
   width: 28rem;
   max-height: 40rem;
   overflow-x: hidden;
@@ -778,3 +794,57 @@ body {
   padding: 0 2rem; }
   .phonebar__link--icon {
     font-size: 3rem; }
+
+.login {
+  display: flex;
+  height: 100vh; }
+  .login__hero {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center; }
+    @media (max-width: 56.25em) {
+      .login__hero {
+        width: 0; } }
+    .login__hero > img {
+      height: 100%; }
+  .login__box {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; }
+    @media (max-width: 56.25em) {
+      .login__box {
+        width: 100%; } }
+    .login__box--sub {
+      display: flex;
+      flex-direction: column;
+      padding: 5rem 3rem;
+      border: 1px solid #f7f7f7;
+      border-radius: 1rem;
+      background-color: #fff; }
+      @media (max-width: 56.25em) {
+        .login__box--sub {
+          max-width: 50rem; } }
+    .login__box--head {
+      display: flex;
+      justify-content: center;
+      padding: 2rem 3rem; }
+    .login__box--foot {
+      margin-top: 5rem;
+      display: flex;
+      align-items: center;
+      font-size: 5rem; }
+      .login__box--foot--content {
+        font-size: 2.3rem; }
+  .login__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; }
+    .login__form--input {
+      width: 100%;
+      border: 2px solid #f7f7f7;
+      border-radius: .5rem;
+      margin: 1rem;
+      padding: 0.5rem; }

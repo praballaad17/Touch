@@ -65,6 +65,13 @@
     animation: moveInButton 0.5s 0.75s;
     animation-fill-mode: backwards;
   }
+
+  &-login{
+    background-color: blue;
+    color: $color-white;
+    width: -webkit-fill-available;
+    
+  }
 }
 
 .btn-text {
@@ -88,4 +95,6 @@
     box-shadow: 0 0.5rem 2rem rgba($color-black, 0.15);
     transform: translateY(0px);
   }
+
+  
 }

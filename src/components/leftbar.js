@@ -20,9 +20,9 @@ export default function Leftbar() {
 
     useEffect(async () => {
         await getuserDisplayImgs(user?.username).then((res) => {
-            if (res.displayImg.profileImg.length > 0)
+            !res.displayImg || res.displayImg.profileImg.length ?
                 setProfileImg(res.displayImg.profileImg)
-            else
+                :
                 setProfileImg(DEFAULT_IMAGE_PATH)
         }).catch(err => {
             console.log(err);
@@ -42,7 +42,9 @@ export default function Leftbar() {
                 <ul className="link-list">
                     <li className="link-list-item">
                         <Link className="u-center-text" to={`/user/${user?.username}`} aria-label="Profile">
-                            <img className="link-list--proImg" src={profileImg} alt={user?.username} />
+                            <img className="link-list--proImg" src={profileImg} onError={(e) => {
+                                e.target.src = DEFAULT_IMAGE_PATH;
+                            }} alt={user?.username} />
                             <span className="link--text">{user?.username}</span>
                         </Link>
                     </li>

@@ -6,6 +6,7 @@ import Post from '../post';
 import { getUserPhotosByUsername } from '../../services/postServices';
 import { getuserDisplayImgs } from '../../services/userServices';
 import { NEWPOST } from '../../constants/routes';
+import TimeLineContext from '../../context/timeline';
 
 export default function Profile({ user }) {
   const reducer = (state, newState) => ({ ...state, ...newState });
@@ -35,25 +36,27 @@ export default function Profile({ user }) {
 
   return (
     <>
-      <Header
-        photosCount={photosCollection ? photosCollection.length : 0}
-        profile={profile}
-        followerCount={followerCount}
-        displayImgs={displayImgs}
-        setProfile={dispatch}
-      />
-      {!photosCollection ? (
-        <Skeleton count={4} width={640} height={500} className="mb-5" />
-      ) : (
-        <>
-          {photosCollection.length ?
-            (photosCollection.map((content) => <Post key={content._id} content={content} profileImg={displayImgs.profileImg} setProfile={dispatch} photosCollection={photosCollection} />)
-            ) : (
-              <div className="nopost">
-                <div className="nopost-no heading-main">No Post</div>
-                <div className="nopost-to"><a href={NEWPOST}>Click Here</a> To Post</div>
-              </div>
-            )} </>)}
+      <TimeLineContext.Provider value={{ user, posts: photosCollection, setPosts: dispatch }}>
+        <Header
+          photosCount={photosCollection ? photosCollection.length : 0}
+          profile={profile}
+          followerCount={followerCount}
+          displayImgs={displayImgs}
+          setProfile={dispatch}
+        />
+        {!photosCollection ? (
+          <Skeleton count={4} width={640} height={500} className="mb-5" />
+        ) : (
+          <>
+            {photosCollection.length ?
+              (photosCollection.map((content) => <Post key={content._id} content={content} profileImg={displayImgs.profileImg} setProfile={dispatch} photosCollection={photosCollection} />)
+              ) : (
+                <div className="nopost">
+                  <div className="nopost-no heading-main">No Post</div>
+                  <div className="nopost-to"><a href={NEWPOST}>Click Here</a> To Post</div>
+                </div>
+              )} </>)}
+      </TimeLineContext.Provider>
     </>
   );
 }
