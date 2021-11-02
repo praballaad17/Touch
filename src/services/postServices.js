@@ -3,11 +3,25 @@ import { apiUrl } from "../config.json";
 
 const apiEndpoint = apiUrl + "/post";
 
-export const postByUsername = async (files, caption, username, progress) => {
+export const postByUsername = async (files, caption, username, paid, price, progress) => {
     try {
         const { data } = await axios.post(`${apiEndpoint}/${username}`,
-            { files, caption }, progress);
+            { files, caption, paid, price }, progress);
         return { data };
+    } catch (err) {
+        throw new Error(err.response.data.error);
+    }
+};
+
+export const resizeImage = async (file) => {
+    try {
+        const { data } = await axios.post(`${apiUrl}/resize/file`,
+            file, {
+            headers: {
+                'Content-Type': 'multipart/form-data; ',
+            }
+        });
+        return data;
     } catch (err) {
         throw new Error(err.response.data.error);
     }
@@ -23,12 +37,15 @@ export const retrivePostByUsername = async (username) => {
 };
 
 
-export const getUserPhotosByUsername = async (username) => {
+export const getUserPhotosByUsername = async (username, logginUserId, pageNumber, limit) => {
     try {
-        const response = await axios.get(`${apiEndpoint}/user-posts/${username}`);
+        const response = await axios.get(`${apiEndpoint}/user-posts/${username}`,
+            {
+                params: { page: pageNumber, limit: limit, logginUserId: logginUserId }
+            });
         return response.data;
     } catch (err) {
-        throw new Error(err.response.data.error);
+        return err;
     }
 };
 

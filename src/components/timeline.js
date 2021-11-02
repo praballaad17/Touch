@@ -14,7 +14,6 @@ export default function Timeline() {
   const [searchToggle, setSearchToggle] = useState(false)
 
   const { posts, loading, hasMore, error, setPosts } = usePhotos(user, pageNumber);
-
   const observer = useRef()
   const lastPostRef = useCallback(node => {
     if (loading) return
@@ -46,10 +45,10 @@ export default function Timeline() {
         ) : (
           posts.map((content, index) => {
             if (posts.length === index + 1) {
-              return <Post postref={lastPostRef} key={content?._id} content={content} />
+              return <Post postref={lastPostRef} key={content?.post._id} content={content} />
             }
             else {
-              return <Post key={content?._id} content={content} />
+              return <Post key={content?.post._id} content={content} />
             }
           })
         )}

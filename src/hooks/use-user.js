@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getUserByUsername, getusersFollowers, getusersFollowing } from '../services/userServices';
+import { getUserByUsername, getusersFollowers, getusersFollowing, getuserDisplayImgs } from '../services/userServices';
 
 export default function useUser(username) {
   const [activeUser, setActiveUser] = useState();
@@ -9,15 +9,15 @@ export default function useUser(username) {
       const user = await getUserByUsername(username);
       const followers = await getusersFollowers(username);
       const following = await getusersFollowing(username);
-      // const user = await getUserByUserId(userId);
-      // const followers = await getusersFollowersById(userId);
-      setActiveUser({ ...user, followers: followers, following: following } || {});
+      const { displayImg } = await getuserDisplayImgs(username);
+      console.log(displayImg);
+      setActiveUser({ ...user, followers: followers, following: following, displayImg: displayImg } || {});
     }
 
     if (username) {
       getUserObjByUserId(username);
     }
   }, [username]);
-
+  console.log(activeUser);
   return { user: activeUser, setActiveUser };
 }

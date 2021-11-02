@@ -497,6 +497,27 @@ body {
       left: 2rem;
       top: 50%; }
 
+.not-paid {
+  width: 100%;
+  height: 45rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative; }
+  .not-paid__lock {
+    position: absolute;
+    top: 42%;
+    left: 47%;
+    color: #e4e4e4;
+    font-size: 5rem;
+    transform: translate(-50%, -50%); }
+    .not-paid__lock:hover {
+      color: #1bb675; }
+  .not-paid__price {
+    margin: 2rem;
+    width: -webkit-fill-available;
+    text-align: center; }
+
 .modal-layout {
   position: fixed;
   top: 0;

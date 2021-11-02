@@ -12,18 +12,11 @@ export default function usePhotos(user, pageNumber) {
     setError(false)
     async function getTimelinePhotos() {
 
-      // does the user actually follow people?
       if (user?.following?.length > 0) {
         try {
           const post = await getPost(user._id, pageNumber, 5);
-
-          // re-arrange array to be newest photos first by dateCreated
-          const sortedPost = post.results.sort((a, b) => {
-            const dateA = new Date(a.date), dateB = new Date(b.date)
-            return dateB - dateA
-          })
-          setPosts(prevPost => { return [...prevPost, ...sortedPost] });
-          setMore(post.results.length > 0)
+          setPosts(prevPost => { return [...prevPost, ...post.result] });
+          setMore(post.result.length > 0)
           setLoading(false)
         } catch (error) {
           setError(true)

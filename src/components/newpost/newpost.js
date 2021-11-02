@@ -1,12 +1,13 @@
 import React, { useContext, useState } from 'react'
 import { useHistory } from "react-router-dom";
-import { faImage } from '@fortawesome/free-solid-svg-icons'
+import { faImage, faLock } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import UploadPreview from './uploadPreview'
 import LoggedInUserContext from '../../context/logged-in-user'
 import usePhotos from '../../hooks/use-photos'
 import { DASHBOARD } from '../../constants/routes'
-import { postByUsername } from '../../services/postServices';
+import { postByUsername, resizeImage } from '../../services/postServices';
+// import sharp from 'sharp'
 
 export default function Newpost() {
     const { user: loggedInUser } = useContext(LoggedInUserContext);
@@ -14,17 +15,23 @@ export default function Newpost() {
     const [selectedFiles, setSelectedFiles] = useState()
     const [filePreviw, setFilePreviw] = useState([])
     const [files, setFiles] = useState([])
+    const [paid, setPaid] = useState(false)
     const [caption, setCaption] = useState("")
+    const [price, setPrice] = useState()
     let [result, setResult] = useState();
     let history = useHistory()
 
-    const handleFileUpload = (e) => {
+    const handleFileUpload = async (e) => {
         if (!e.target.files.length) return;
-
+        const file = e.target.files[0]
+        let form = new FormData()
+        form.append('image', file)
+        const resizeimage = await resizeImage(form)
+        console.log(form, resizeimage);
         setFilePreviw(prevFile => [...prevFile, URL.createObjectURL(e.target.files[0])])
         let reader = new FileReader();
         // Convert the file to base64 text
-        reader.readAsDataURL(e.target.files[0]);
+        reader.readAsDataURL(resizeimage);
         // on reader load somthing...
         reader.onload = () => {
             // Make a fileInfo Object
@@ -50,9 +57,14 @@ export default function Newpost() {
         }
     }
 
+    const isPaid = () => {
+        setPaid(!paid)
+    }
+    console.log(paid, price);
+
     const handleSubmit = async () => {
         try {
-            const { data } = await postByUsername(files, caption, loggedInUser.username, progress)
+            const { data } = await postByUsername(files, caption, loggedInUser.username, paid, price, progress)
             // const res = await postByUsername(formData, loggedInUser.username)
             setPosts(data)
             history.push(DASHBOARD)
@@ -66,7 +78,10 @@ export default function Newpost() {
         <>
             <div className="newpost__head">
                 <h3 className="heading-tertiary">New Post</h3>
-                <button className="btn btn--grey" onClick={handleSubmit}>Post</button>
+                <div>
+                    <FontAwesomeIcon className={`newpost__lock`} onClick={isPaid} icon={faLock} />
+                    <button className="btn btn--grey" onClick={handleSubmit}>Post</button>
+                </div>
             </div>
             <div className="newpost__main">
                 <div>
@@ -77,6 +92,7 @@ export default function Newpost() {
                     <FontAwesomeIcon icon={faImage} />
                     <input type="file" style={{ opacity: 0, position: "absolute", left: "-99999px" }} onChange={handleFileUpload} />
                 </label>
+                <input type="text" placeholder="Price You Select" onChange={(e) => setPrice(e.target.value)} />
             </div>
 
         </>
