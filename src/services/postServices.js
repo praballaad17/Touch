@@ -3,10 +3,10 @@ import { apiUrl } from "../config.json";
 
 const apiEndpoint = apiUrl + "/post";
 
-export const postByUsername = async (files, caption, username, paid, price, progress) => {
+export const postByUsername = async (files, caption, username, paid, price, progressFn) => {
     try {
         const { data } = await axios.post(`${apiEndpoint}/${username}`,
-            { files, caption, paid, price }, progress);
+            { files, caption, paid, price }, progressFn);
         return { data };
     } catch (err) {
         console.log(err);
@@ -15,8 +15,8 @@ export const postByUsername = async (files, caption, username, paid, price, prog
 
 export const getPostById = async (postId) => {
     try {
-        const {data}  = await axios.get(`${apiEndpoint}/posts/${postId}`);
-        return  data ;
+        const { data } = await axios.get(`${apiEndpoint}/posts/${postId}`);
+        return data;
     } catch (err) {
         console.log(err);
     }

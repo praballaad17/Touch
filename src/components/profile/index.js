@@ -6,6 +6,7 @@ import { NEWPOST } from '../../constants/routes';
 import TimeLineContext from '../../context/timeline';
 import LoggedInUserContext from '../../context/logged-in-user';
 import useProfilePost from '../../hooks/useProfilePost';
+import ReactLoader from '../loader';
 
 export default function Profile({ user, setUser }) {
   const [pageNumber, setPageNumber] = useState(1)
@@ -27,12 +28,12 @@ export default function Profile({ user, setUser }) {
   }, [loading, hasMore])
 
   useEffect(() => {
-     function getProfileInfoAndPhotos() {
+    function getProfileInfoAndPhotos() {
       setfollowerCount(user?.followers.length)
     }
     getProfileInfoAndPhotos();
   }, [user, logginUser]);
-  
+
   return (
     <>
       <TimeLineContext.Provider value={{ user, setUser, userPost: posts, setuserPost: setPosts }}>
@@ -43,7 +44,7 @@ export default function Profile({ user, setUser }) {
           setfollowerCount={setfollowerCount}
           followerCount={followerCount}
         />}
-        {!posts || loading ? (
+        {!posts.length && loading ? (
           <Skeleton count={1} width={640} height={500} className="mb-5" />
         ) : (
           <>
@@ -56,13 +57,16 @@ export default function Profile({ user, setUser }) {
                   return <Post key={content?._id} content={content} userProfileImg={user?.displayImg.profileImg} />
                 }
               })
-                // posts.map((content) => <Post key={content._id} content={content} profileImg={displayImgs.profileImg} setProfile={dispatch} photosCollection={photosCollection} />)
               ) : (
                 <div className="nopost">
                   <div className="nopost-no heading-main">No Post</div>
                   <div className="nopost-to"><a href={NEWPOST}>Click Here</a> To Post</div>
                 </div>
-              )} </>)}
+              )}
+            <div>{loading && (
+              <ReactLoader />
+            )}</div>
+          </>)}
       </TimeLineContext.Provider>
     </>
   );

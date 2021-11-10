@@ -7,7 +7,6 @@ import ReactLoader from '../components/loader';
 import LoggedInUserContext from '../context/logged-in-user';
 
 export default function Profile(props) {
-  const updatedImg = (props.location && props.location.updatedImg) || {};
   const { username } = useParams();
   const { loggedInUser } = useContext(LoggedInUserContext)
   const [user, setUser] = useState(null);
@@ -20,14 +19,14 @@ export default function Profile(props) {
       const followers = await getusersFollowers(username);
       const following = await getusersFollowing(username);
       const result = await getuserDisplayImgs(username)
-        setUser({ ...user, followers: followers, following: following, displayImg: result?.displayImg });
+      setUser({ ...user, followers: followers, following: following, displayImg: result?.displayImg });
       setLoading(false)
     }
 
     async function checkUserExists() {
       try {
         const result = await getUserByUsername(username);
-        if ( loggedInUser && username === loggedInUser?.username) {
+        if (loggedInUser && username === loggedInUser?.username) {
           setUser(loggedInUser)
           setLoading(false)
         }
@@ -38,17 +37,11 @@ export default function Profile(props) {
         history.push(ROUTES.NOT_FOUND)
       }
     }
-    
+
     checkUserExists()
-    
+
   }, [username, history]);
 
-  useEffect(() => {
-    if (Object.keys(updatedImg).length !== 0 && updatedImg.constructor === Object)
-      console.log(updatedImg);
-    // setdisplayImgs(updatedImg)
-  }, [updatedImg])
-  
   return (
     <>
       {loading ? (

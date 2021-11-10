@@ -11,7 +11,7 @@ import ProgressModal from './progressModal';
 // import sharp from 'sharp'
 
 export default function Newpost() {
-    const { user: loggedInUser } = useContext(LoggedInUserContext);
+    const { loggedInUser } = useContext(LoggedInUserContext);
     const { setPosts } = usePhotos()
     const [selectedFiles, setSelectedFiles] = useState()
     const [filePreviw, setFilePreviw] = useState([])
@@ -31,16 +31,7 @@ export default function Newpost() {
         form.append('image', file)
         const resizeimage = await resizeImage(form)
         setFilePreviw(prevFile => [...prevFile, resizeimage])
-        // let reader = new FileReader();
-        // // Convert the file to base64 text
-        // reader.readAsDataURL(resizeimage);
-        // // on reader load somthing...
-        // reader.onload = () => {
-        //     // Make a fileInfo Object
-        //     const baseURL = reader.result;
-        // }
         setFiles(prevFiles => [...prevFiles, resizeimage])
-
     }
 
     const handleCaption = (e) => {
@@ -70,7 +61,6 @@ export default function Newpost() {
             setpgModal(true)
             const { data } = await postByUsername(files, caption, loggedInUser.username, paid, price, progressFn)
             // const res = await postByUsername(formData, loggedInUser.username)
-            console.log(data);
             setPosts(prevPost => [...prevPost, data])
             history.push({
                 pathname: DASHBOARD,

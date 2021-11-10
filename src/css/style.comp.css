@@ -546,6 +546,27 @@ body {
     .modal-box__item > label {
       cursor: pointer; }
 
+.progress {
+  display: flex;
+  position: relative;
+  justify-content: left;
+  padding: 1rem;
+  height: 5rem;
+  width: 90%; }
+  .progress__bar {
+    position: absolute;
+    background-color: #ffb900;
+    width: 0%;
+    border-radius: 1rem;
+    height: 2rem;
+    z-index: 1; }
+  .progress__base {
+    position: absolute;
+    background-color: #a6a6a6;
+    width: 100%;
+    border-radius: 1rem;
+    height: 2rem; }
+
 @media (max-width: 56.25em) {
   .search__icon {
     display: none; } }
