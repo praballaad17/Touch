@@ -1,20 +1,18 @@
 import { useReducer, useEffect, useContext, useState, useRef, useCallback } from 'react';
-import PropTypes from 'prop-types';
 import Header from './header';
 import Skeleton from 'react-loading-skeleton';
 import Post from '../post';
-import { getUserPhotosByUsername } from '../../services/postServices';
-import { getuserDisplayImgs } from '../../services/userServices';
 import { NEWPOST } from '../../constants/routes';
 import TimeLineContext from '../../context/timeline';
 import LoggedInUserContext from '../../context/logged-in-user';
 import useProfilePost from '../../hooks/useProfilePost';
 
-export default function Profile({ user }) {
+export default function Profile({ user, setUser }) {
   const [pageNumber, setPageNumber] = useState(1)
-  const { user: logginUser } = useContext(LoggedInUserContext)
+  const [followerCount, setfollowerCount] = useState()
+  const { logginUser } = useContext(LoggedInUserContext)
   const { posts, loading, hasMore, error, setPosts } = useProfilePost(user, logginUser?._id, pageNumber);
-  const reducer = (state, newState) => ({ ...state, ...newState });
+
 
   const observer = useRef()
   const lastPostRef = useCallback(node => {
@@ -28,47 +26,34 @@ export default function Profile({ user }) {
     if (node) observer.current.observe(node)
   }, [loading, hasMore])
 
-  const initialState = {
-    profile: {},
-    photosCollection: null,
-    followerCount: 0,
-    displayImgs: {}
-  };
-  const [{ profile, photosCollection, followerCount, displayImgs }, dispatch] = useReducer(
-    reducer,
-    initialState
-  );
-
   useEffect(() => {
-    async function getProfileInfoAndPhotos() {
-      console.log(posts);
-      const { displayImg } = await getuserDisplayImgs(user.username)
-      dispatch({ profile: user, photosCollection: posts, followerCount: user.followers.length, displayImgs: displayImg });
+     function getProfileInfoAndPhotos() {
+      setfollowerCount(user?.followers.length)
     }
     getProfileInfoAndPhotos();
-  }, [user, pageNumber, logginUser]);
-  console.log(posts, photosCollection);
+  }, [user, logginUser]);
+  
   return (
     <>
-      <TimeLineContext.Provider value={{ user, posts: posts, setPosts: dispatch }}>
-        <Header
-          photosCount={photosCollection ? photosCollection.length : 0}
-          profile={profile}
+      <TimeLineContext.Provider value={{ user, setUser, userPost: posts, setuserPost: setPosts }}>
+        {user && <Header
+          photosCount={posts ? posts.length : 0}
+          user={user}
+          setUser={setUser}
+          setfollowerCount={setfollowerCount}
           followerCount={followerCount}
-          displayImgs={displayImgs}
-          setProfile={dispatch}
-        />
-        {!posts ? (
-          <Skeleton count={4} width={640} height={500} className="mb-5" />
+        />}
+        {!posts || loading ? (
+          <Skeleton count={1} width={640} height={500} className="mb-5" />
         ) : (
           <>
             {posts.length ?
               (posts.map((content, index) => {
                 if (posts.length === index + 1) {
-                  return <Post postref={lastPostRef} key={content?.post._id} content={content} />
+                  return <Post postref={lastPostRef} key={content?._id} content={content} userProfileImg={user?.displayImg.profileImg} />
                 }
                 else {
-                  return <Post key={content?.post._id} content={content} profileImg={displayImgs.profileImg} />
+                  return <Post key={content?._id} content={content} userProfileImg={user?.displayImg.profileImg} />
                 }
               })
                 // posts.map((content) => <Post key={content._id} content={content} profileImg={displayImgs.profileImg} setProfile={dispatch} photosCollection={photosCollection} />)
@@ -82,15 +67,4 @@ export default function Profile({ user }) {
     </>
   );
 }
-
-Profile.propTypes = {
-  user: PropTypes.shape({
-    date: PropTypes.number,
-    email: PropTypes.string,
-    followers: PropTypes.array,
-    following: PropTypes.array,
-    fullName: PropTypes.string,
-    _id: PropTypes.string,
-    username: PropTypes.string
-  })
-};
+;

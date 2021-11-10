@@ -14,7 +14,6 @@ export default function useProfilePost(user, logginUserId, pageNumber) {
 
             try {
                 const post = await getUserPhotosByUsername(user.username, logginUserId, pageNumber, 5);
-                console.log(post);
                 setPosts(prevPost => { return [...prevPost, ...post.result] });
                 setMore(post.result.length > 0)
                 setLoading(false)

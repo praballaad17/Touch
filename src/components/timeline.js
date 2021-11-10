@@ -1,19 +1,23 @@
-import { faArrowLeft, faBackward, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useCallback, useContext, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import TimeLineContext from '../context/timeline';
 import LoggedInUserContext from '../context/logged-in-user';
-import usePhotos from '../hooks/use-photos';
 import SearchBar from './leftbar/searchBar';
 import Post from './post';
+import ReactLoader from './loader';
 
-export default function Timeline() {
-  const { user } = useContext(LoggedInUserContext);
-  const [pageNumber, setPageNumber] = useState(1)
+export default function Timeline(props) {
+  const data = (props.location && props.location.data) || {};
+  const { loggedInUser, posts, loading, hasMore, error, setPosts, setPageNumber } = useContext(LoggedInUserContext);
   const [searchToggle, setSearchToggle] = useState(false)
 
-  const { posts, loading, hasMore, error, setPosts } = usePhotos(user, pageNumber);
+  useEffect(() => {
+    if (Object.keys(data).length !== 0 && data.constructor === Object)
+      setPosts(prevPost => [data, ...prevPost])
+  }, [])
+
   const observer = useRef()
   const lastPostRef = useCallback(node => {
     if (loading) return
@@ -26,9 +30,8 @@ export default function Timeline() {
     if (node) observer.current.observe(node)
   }, [loading, hasMore])
 
-
   return (
-    <TimeLineContext.Provider value={{ user, posts, setPosts }}>
+    <TimeLineContext.Provider value={{ loggedInUser, posts, setPosts }}>
       <div className="container col-span-2">
         <div className="timeline__head">
           {!searchToggle && <h3 className="heading-main">Home</h3>}
@@ -40,20 +43,20 @@ export default function Timeline() {
             <FontAwesomeIcon icon={faSearch} onClick={() => setSearchToggle(true)} />
           </div>
         </div>
-        {!posts ? (
-          <Skeleton count={4} width={640} height={500} className="mb-5" />
+        {!posts.length && loading ? (
+          <Skeleton count={2} width={640} height={500} />
         ) : (
           posts.map((content, index) => {
             if (posts.length === index + 1) {
-              return <Post postref={lastPostRef} key={content?.post._id} content={content} />
+              return <Post postref={lastPostRef} key={content?._id} content={content} />
             }
             else {
-              return <Post key={content?.post._id} content={content} />
+              return <Post key={content?._id} content={content} />
             }
           })
         )}
         <div>{loading && (
-          <Skeleton count={4} width={640} height={500} className="mb-5" />
+          <ReactLoader />
         )}</div>
         <div>{error && 'Error'}</div>
       </div>

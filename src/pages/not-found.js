@@ -8,12 +8,11 @@ export default function NotFound() {
 
   return (
     <>
-      <div className="dashboard">      <div className="dashboard__leftbar">
+      {/* <div className="dashboard">      <div className="dashboard__leftbar">
         <Leftbar />
-      </div>
-        <div className="mx-auto max-w-screen-lg">
-          <p className="text-center text-2xl">Not Found!</p>
-        </div>
+      </div> */}
+      <div className="mx-auto max-w-screen-lg">
+        <p className="text-center text-2xl">Not Found!</p>
       </div>
     </>
   );

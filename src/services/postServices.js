@@ -9,19 +9,28 @@ export const postByUsername = async (files, caption, username, paid, price, prog
             { files, caption, paid, price }, progress);
         return { data };
     } catch (err) {
-        throw new Error(err.response.data.error);
+        console.log(err);
+    }
+};
+
+export const getPostById = async (postId) => {
+    try {
+        const {data}  = await axios.get(`${apiEndpoint}/posts/${postId}`);
+        return  data ;
+    } catch (err) {
+        console.log(err);
     }
 };
 
 export const resizeImage = async (file) => {
     try {
-        const { data } = await axios.post(`${apiUrl}/resize/file`,
+        const responce = await axios.post(`${apiUrl}/resize/file`,
             file, {
             headers: {
                 'Content-Type': 'multipart/form-data; ',
             }
         });
-        return data;
+        return responce.data;
     } catch (err) {
         throw new Error(err.response.data.error);
     }

@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
 import { useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';
 import useUser from '../../hooks/use-user';
 import { toggleFollow } from '../../services/userServices';
@@ -12,56 +11,52 @@ import FollowerModal from './followerModal';
 export default function Header({
   photosCount,
   followerCount,
-  setProfile,
-  displayImgs,
-  profile: {
-    _id: profileUserId,
-    fullName,
-    followers,
-    following,
-    username: profileUsername
-  }
+  setfollowerCount,
+  user
 }) {
   const { user: loggedInUser } = useContext(UserContext);
-  const { user } = useUser(loggedInUser?.username);
+  // const { user } = useUser(loggedInUser?.username);
   const [isFollowingProfile, setIsFollowingProfile] = useState(null);
   const [ispiModal, setIspiModal] = useState(false)
   const [isfollowerModal, setIsfollowerModal] = useState(false)
   const [isfollowingModal, setIsfollowingModal] = useState(false)
-  // const [profileImg, setProfileImg] = useState();
-  const activeBtnFollow = user?.username && user?.username !== profileUsername;
-
+  const { _id: profileUserId, fullName, followers, following, username: profileUsername, displayImg } = user
+  const activeBtnFollow = loggedInUser?.username && loggedInUser?.username !== profileUsername;
+  console.log(loggedInUser);
   const handleToggleFollow = async () => {
     setIsFollowingProfile((isFollowingProfile) => !isFollowingProfile);
-    setProfile({
-      followerCount: isFollowingProfile ? followerCount - 1 : followerCount + 1
-    });
-    await toggleFollow(isFollowingProfile, profileUserId, user._id);
+    setfollowerCount(isFollowingProfile ? followerCount - 1 : followerCount + 1);
+    await toggleFollow(isFollowingProfile, profileUserId, loggedInUser.id);
   };
 
   useEffect(() => {
     const isLoggedInUserFollowingProfile = () => {
-      // const isFollowing = await isUserFollowingProfile(user.username, profileUserId);
-      const isFollowing = followers.filter(item => item._id == user._id)
+      const isFollowing = followers.filter(item => item._id == loggedInUser.id)
       setIsFollowingProfile(!!isFollowing.length);
     };
 
-    if (user?.username && profileUserId) {
+    if (loggedInUser?.username && profileUserId) {
       isLoggedInUserFollowingProfile();
     }
-  }, [user?.username, profileUserId]);
+  }, [loggedInUser?.username, profileUserId]);
 
+  const handleProfileImg = () => {
+    if (loggedInUser?.username === user?.username)
+      setIspiModal(true)
 
+    else return
+  }
+  console.log(user)
   return (
     <>
       <div className="grid grid-cols-3 gap-4 justify-between mx-auto max-w-screen-lg">
         <div className="container flex justify-center items-center">
           {profileUsername ? (
             <img
-              onClick={() => setIspiModal(true)}
+              onClick={handleProfileImg}
               className="rounded-full h-40 w-40 flex"
               alt={`${fullName} profile picture`}
-              src={displayImgs ? displayImgs.profileImg : DEFAULT_IMAGE_PATH}
+              src={displayImg ? displayImg.profileImg : DEFAULT_IMAGE_PATH}
               onError={(e) => {
                 e.target.src = DEFAULT_IMAGE_PATH;
               }}
@@ -71,7 +66,7 @@ export default function Header({
           )}
         </div>
 
-        <PIModal setProfile={setProfile} open={ispiModal} user={user} onClose={() => setIspiModal(false)} />
+        <PIModal displayImgs={displayImg} open={ispiModal} onClose={() => setIspiModal(false)} />
 
         <div className="flex items-center justify-center flex-col col-span-2">
           <div className="container flex items-center">
@@ -108,7 +103,7 @@ export default function Header({
                   {` `}
                   {followerCount === 1 ? `follower` : `followers`}
                 </p>
-                <FollowerModal open={isfollowerModal} user={user} onClose={() => setIsfollowerModal(false)} />
+                <FollowerModal open={isfollowerModal} loggedInUser={loggedInUser} onClose={() => setIsfollowerModal(false)} />
                 <p className="mr-10" onClick={() => setIsfollowingModal(true)}>
                   <span className="font-bold">{following?.length}</span> following
                 </p>
@@ -125,16 +120,3 @@ export default function Header({
   );
 }
 
-Header.propTypes = {
-  photosCount: PropTypes.number.isRequired,
-  followerCount: PropTypes.number.isRequired,
-  setProfile: PropTypes.func.isRequired,
-  profile: PropTypes.shape({
-    docId: PropTypes.string,
-    userId: PropTypes.string,
-    fullName: PropTypes.string,
-    username: PropTypes.string,
-    followers: PropTypes.array,
-    following: PropTypes.array
-  }).isRequired
-};

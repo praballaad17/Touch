@@ -1,36 +1,66 @@
 import { useParams, useHistory } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { getusersFollowing, getusersFollowers, getUserByUsername } from '../services/userServices'
+import { useState, useEffect, useContext } from 'react';
+import { getusersFollowing, getusersFollowers, getUserByUsername, getuserDisplayImgs } from '../services/userServices'
 import * as ROUTES from '../constants/routes';
-import Header from '../components/header';
 import UserProfile from '../components/profile';
+import ReactLoader from '../components/loader';
+import LoggedInUserContext from '../context/logged-in-user';
 
-export default function Profile() {
+export default function Profile(props) {
+  const updatedImg = (props.location && props.location.updatedImg) || {};
   const { username } = useParams();
+  const { loggedInUser } = useContext(LoggedInUserContext)
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false)
   const history = useHistory();
 
   useEffect(() => {
-
-    async function checkUserExists() {
-      const user = await getUserByUsername(username);
+    setLoading(true)
+    async function getUserDetails(user) {
       const followers = await getusersFollowers(username);
       const following = await getusersFollowing(username);
-      if (user?._id) {
-        setUser({ ...user, followers: followers, following: following });
+      const result = await getuserDisplayImgs(username)
+        setUser({ ...user, followers: followers, following: following, displayImg: result?.displayImg });
+      setLoading(false)
+    }
 
-      } else {
-        history.push(ROUTES.NOT_FOUND);
+    async function checkUserExists() {
+      try {
+        const result = await getUserByUsername(username);
+        if ( loggedInUser && username === loggedInUser?.username) {
+          setUser(loggedInUser)
+          setLoading(false)
+        }
+        else {
+          getUserDetails(result);
+        }
+      } catch (error) {
+        history.push(ROUTES.NOT_FOUND)
       }
     }
-    checkUserExists();
+    
+    checkUserExists()
+    
   }, [username, history]);
 
-  return user?.username ? (
-    <div className="bg-gray-background">
-      <div className="mx-auto max-w-screen-lg">
-        <UserProfile user={user} />
-      </div>
-    </div>
-  ) : null;
+  useEffect(() => {
+    if (Object.keys(updatedImg).length !== 0 && updatedImg.constructor === Object)
+      console.log(updatedImg);
+    // setdisplayImgs(updatedImg)
+  }, [updatedImg])
+  
+  return (
+    <>
+      {loading ? (
+        <ReactLoader />
+      ) : (
+        <div className="bg-gray-background">
+          <div className="mx-auto max-w-screen-lg">
+            <UserProfile user={user} setUser={setUser} />
+          </div>
+        </div>
+      )
+      }
+    </>
+  )
 }

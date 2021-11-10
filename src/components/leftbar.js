@@ -3,49 +3,30 @@ import * as ROUTES from '../constants/routes';
 import { Link, Route, useHistory } from 'react-router-dom';
 import { faBars, faBell, faBookmark, faChild, faCog, faHome, faIdCard, faList, faMailBulk, faPlus, faSignOutAlt, faUniversity, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import UserContext from '../context/user';
 import useUser from '../hooks/use-user';
 import ToggleBar from './toggleBar';
-import { getuserDisplayImgs } from '../services/userServices';
-import { useEffect } from 'react';
 import { DEFAULT_IMAGE_PATH } from '../constants/paths';
+import LoggedInUserContext from '../context/logged-in-user';
 
-export default function Leftbar() {
+export default function Leftbar({ loggedInUser }) {
     const [show, setShow] = useState(false)
-    const [profileImg, setProfileImg] = useState()
-    const { user: loggedInUser } = useContext(UserContext);
-    const { user } = useUser(loggedInUser?.username);
-
+    // const { loggedInUser } = useContext(LoggedInUserContext);
     const history = useHistory();
-
-    useEffect(async () => {
-        await getuserDisplayImgs(user?.username).then((res) => {
-            !res.displayImg || res.displayImg.profileImg.length ?
-                setProfileImg(res.displayImg.profileImg)
-                :
-                setProfileImg(DEFAULT_IMAGE_PATH)
-        }).catch(err => {
-            console.log(err);
-        })
-
-        // setProfileImg(result?.displayImg?.profileImg)
-
-    }, [user])
 
     return (
         <>
             <div className="leftbar__toglebar">
-                <ToggleBar show={show} user={user} loggedInUser={loggedInUser} onClose={() => setShow(false)} />
+                <ToggleBar show={show} loggedInUser={loggedInUser} onClose={() => setShow(false)} />
             </div>
 
             <div className="leftbar">
                 <ul className="link-list">
                     <li className="link-list-item">
-                        <Link className="u-center-text" to={`/user/${user?.username}`} aria-label="Profile">
-                            <img className="link-list--proImg" src={profileImg} onError={(e) => {
+                        <Link className="u-center-text" to={`/user/${loggedInUser?.username}`} aria-label="Profile">
+                            <img className="link-list--proImg" src={loggedInUser?.displayImg.profileImg} onError={(e) => {
                                 e.target.src = DEFAULT_IMAGE_PATH;
-                            }} alt={user?.username} />
-                            <span className="link--text">{user?.username}</span>
+                            }} alt={loggedInUser?.username} />
+                            <span className="link--text">{loggedInUser?.username}</span>
                         </Link>
                     </li>
                     <li className="link-list-item">
@@ -92,7 +73,7 @@ export default function Leftbar() {
                             </Link>
                         </li>
                         <li className="link-list-item">
-                            <Link className="link" to={`/user/${user?.username}`} aria-label="Dashboard">
+                            <Link className="link" to={`/user/${loggedInUser?.username}`} aria-label="Dashboard">
                                 <span className="link--icon">
                                     <FontAwesomeIcon icon={faUser} /></span>
                                 <span className="link--text">My Profile</span>

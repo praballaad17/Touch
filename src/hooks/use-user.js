@@ -6,18 +6,20 @@ export default function useUser(username) {
 
   useEffect(() => {
     async function getUserObjByUserId(username) {
-      const user = await getUserByUsername(username);
-      const followers = await getusersFollowers(username);
-      const following = await getusersFollowing(username);
-      const { displayImg } = await getuserDisplayImgs(username);
-      console.log(displayImg);
-      setActiveUser({ ...user, followers: followers, following: following, displayImg: displayImg } || {});
+      try {
+        const user = await getUserByUsername(username);
+        const followers = await getusersFollowers(username);
+        const following = await getusersFollowing(username);
+        const { displayImg } = await getuserDisplayImgs(username);
+        setActiveUser({ ...user, followers: followers, following: following, displayImg: displayImg } || {});
+      } catch (error) {
+        console.log(error)
+      }
     }
 
     if (username) {
       getUserObjByUserId(username);
     }
   }, [username]);
-  console.log(activeUser);
   return { user: activeUser, setActiveUser };
 }

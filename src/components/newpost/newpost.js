@@ -7,6 +7,7 @@ import LoggedInUserContext from '../../context/logged-in-user'
 import usePhotos from '../../hooks/use-photos'
 import { DASHBOARD } from '../../constants/routes'
 import { postByUsername, resizeImage } from '../../services/postServices';
+import ProgressModal from './progressModal';
 // import sharp from 'sharp'
 
 export default function Newpost() {
@@ -18,6 +19,8 @@ export default function Newpost() {
     const [paid, setPaid] = useState(false)
     const [caption, setCaption] = useState("")
     const [price, setPrice] = useState()
+    const [progress, setProgress] = useState("")
+    const [pgModal, setpgModal] = useState(false)
     let [result, setResult] = useState();
     let history = useHistory()
 
@@ -27,17 +30,17 @@ export default function Newpost() {
         let form = new FormData()
         form.append('image', file)
         const resizeimage = await resizeImage(form)
-        console.log(form, resizeimage);
-        setFilePreviw(prevFile => [...prevFile, URL.createObjectURL(e.target.files[0])])
-        let reader = new FileReader();
-        // Convert the file to base64 text
-        reader.readAsDataURL(resizeimage);
-        // on reader load somthing...
-        reader.onload = () => {
-            // Make a fileInfo Object
-            const baseURL = reader.result;
-            setFiles(prevFiles => [...prevFiles, baseURL])
-        }
+        setFilePreviw(prevFile => [...prevFile, resizeimage])
+        // let reader = new FileReader();
+        // // Convert the file to base64 text
+        // reader.readAsDataURL(resizeimage);
+        // // on reader load somthing...
+        // reader.onload = () => {
+        //     // Make a fileInfo Object
+        //     const baseURL = reader.result;
+        // }
+        setFiles(prevFiles => [...prevFiles, resizeimage])
+
     }
 
     const handleCaption = (e) => {
@@ -50,24 +53,29 @@ export default function Newpost() {
         setFiles(files.splice(index, 1))
     }
 
-    const progress = {
+    const progressFn = {
         onUploadProgress: (progressEvent) => {
             let progressper = Math.round(progressEvent.loaded / progressEvent.total * 100) + "%";
             console.log(progressper);
+            setProgress(progressper)
         }
     }
 
     const isPaid = () => {
         setPaid(!paid)
     }
-    console.log(paid, price);
 
     const handleSubmit = async () => {
         try {
-            const { data } = await postByUsername(files, caption, loggedInUser.username, paid, price, progress)
+            setpgModal(true)
+            const { data } = await postByUsername(files, caption, loggedInUser.username, paid, price, progressFn)
             // const res = await postByUsername(formData, loggedInUser.username)
-            setPosts(data)
-            history.push(DASHBOARD)
+            console.log(data);
+            setPosts(prevPost => [...prevPost, data])
+            history.push({
+                pathname: DASHBOARD,
+                data
+            })
         } catch (error) {
             console.log(error.response);
         }
@@ -95,6 +103,7 @@ export default function Newpost() {
                 <input type="text" placeholder="Price You Select" onChange={(e) => setPrice(e.target.value)} />
             </div>
 
+            {pgModal && <ProgressModal open={pgModal} progress={progress} onClose={() => setpgModal(false)} />}
         </>
     )
 }

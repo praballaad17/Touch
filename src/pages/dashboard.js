@@ -9,22 +9,27 @@ import LoggedInUserContext from '../context/logged-in-user';
 import Leftbar from '../components/leftbar';
 import SearchBar from '../components/leftbar/searchBar';
 import ToggleBar from '../components/toggleBar';
+import usePhotos from '../hooks/use-photos';
+import ReactLoader from '../components/loader';
+import NotFound from './not-found';
 
 const Profile = lazy(() => import('./profile'));
 const Timeline = lazy(() => import('../components/timeline'));
 const Messages = lazy(() => import('../components/messages'));
 const Newpost = lazy(() => import('../components/newpost/newpost'));
 
-export default function Dashboard({ user: loggedInUser }) {
-  const [show, setShow] = useState(false)
-  const userId = loggedInUser ? loggedInUser.id : null
-  const username = loggedInUser ? loggedInUser.username : null
-  const { user, setActiveUser } = useUser(username);
-  let { path, url } = useRouteMatch();
-
+export default function Dashboard({ user }) {
   useEffect(() => {
     document.title = 'Touch';
   }, []);
+  const [show, setShow] = useState(false)
+  const [pageNumber, setPageNumber] = useState(1)
+  const userId = user ? user.id : null
+  const username = user ? user.username : null
+  const { user: loggedInUser, setActiveUser } = useUser(username);
+
+  const { posts, loading, hasMore, error, setPosts } = usePhotos(loggedInUser, pageNumber);
+  let { path, url } = useRouteMatch();
 
   function Phonebar() {
     return (
@@ -56,7 +61,7 @@ export default function Dashboard({ user: loggedInUser }) {
   }
 
   return (
-    <LoggedInUserContext.Provider value={{ user, setActiveUser }}>
+    <LoggedInUserContext.Provider value={{ loggedInUser, setActiveUser, posts, loading, setPosts, error, hasMore, setPageNumber }}>
 
       {/* <Header /> */}
 
@@ -64,23 +69,24 @@ export default function Dashboard({ user: loggedInUser }) {
         <div className="dashboard__phonebar">
           <Phonebar />
           <div className="dashboard__togglebar">
-            <ToggleBar show={show} user={user} loggedInUser={loggedInUser} onClose={() => setShow(false)} />
+            <ToggleBar show={show} loggedInUser={loggedInUser} onClose={() => setShow(false)} />
           </div>
         </div>
         <div className="dashboard__leftbar">
-          <Leftbar path={path} url={url} />
+          <Leftbar loggedInUser={loggedInUser} path={path} url={url} />
         </div>
         <div className="dashboard__main">
+          {/* <Suspense fallback={<ReactLoader />}> */}
           <Switch>
             <Route path={ROUTES.PROFILE} component={Profile} />
             <Route path={ROUTES.DASHBOARD} component={Timeline} exact />
             <Route path={ROUTES.MESSAGES} component={Messages} />
             <Route path={ROUTES.NEWPOST} component={Newpost} />
+            <Route component={NotFound} />
           </Switch>
+          {/* </Suspense> */}
         </div>
         <div className="dashboard__rightbar">
-          {/* <Timeline /> */}
-          {/* <Sidebar />  */}
           <div className="dashboard__right--search">
             <SearchBar />
           </div>
@@ -92,6 +98,3 @@ export default function Dashboard({ user: loggedInUser }) {
   );
 }
 
-Dashboard.propTypes = {
-  user: PropTypes.object.isRequired
-};

@@ -7,11 +7,12 @@ import { deletePostById } from '../../services/postServices'
 import usePhotos from '../../hooks/use-photos'
 import { DASHBOARD } from '../../constants/routes'
 import TimeLineContext from '../../context/timeline'
+import ProfileContext from '../../context/profile'
 
-export default function PostModal({ open, content, onClose, setProfile, photosCollection }) {
+export default function PostModal({ open, content, onClose }) {
     const [profileImg, setProfileImg] = useState()
-    const { user } = useContext(LoggedInUserContext)
-    const { posts, setPosts } = useContext(TimeLineContext)
+    const { loggedInUser } = useContext(LoggedInUserContext)
+    const { posts, setPosts, userPost, setuserPost } = useContext(TimeLineContext)
     const { pathname } = useLocation()
 
     if (!open) return null
@@ -27,7 +28,7 @@ export default function PostModal({ open, content, onClose, setProfile, photosCo
 
     const notLikedPost = () => {
         localStorage.setItem("dontLikePost", JSON.stringify({ postId: content._id, author: content.author }))
-        setPosts(posts.filter(item => item._id != content._id))
+        // setPosts(posts.filter(item => item._id != content._id))
         onClose()
     }
 
@@ -36,8 +37,10 @@ export default function PostModal({ open, content, onClose, setProfile, photosCo
             setPosts(posts.filter(item => item._id != content._id))
             // window.location = pathname
         }
-        else
-            setPosts({ photosCollection: photosCollection.filter(item => item._id != content._id) })
+        else {
+            setuserPost(userPost.filter(item => item._id != content._id))
+            // window.location = pathname
+        }
         deletePostById(content._id).then(() => {
 
 
@@ -48,8 +51,9 @@ export default function PostModal({ open, content, onClose, setProfile, photosCo
                 setPosts(prevPost => [...prevPost, content])
                 // window.location = pathname
             }
-            else
-                setPosts({ photosCollection: photosCollection.push(content) })
+            else {
+                setuserPost(prevPost => [...prevPost, content])
+            }
 
         })
     }
@@ -60,9 +64,9 @@ export default function PostModal({ open, content, onClose, setProfile, photosCo
             <div className="modal-box">
                 <ul className="modal-box__list">
                     <li className="modal-box__item" ><Link target="_blanck" to={`/user/${content?.author}`} >Share</Link></li>
-                    {content.author != user.username && <li className="modal-box__item u-text-red-bold" onClick={unfollow} >Unfollow</li>}
-                    {content.author == user.username && < li className="modal-box__item u-text-red-bold" onClick={deletePost} >Delete Post</li>}
-                    {content.author != user.username && <li className="modal-box__item u-text-red-bold" onClick={notLikedPost} >I don't link this Post</li>}
+                    {/* {content.author != user.username && <li className="modal-box__item u-text-red-bold" onClick={unfollow} >Unfollow</li>} */}
+                    {content.author == loggedInUser.username && < li className="modal-box__item u-text-red-bold" onClick={deletePost} >Delete Post</li>}
+                    {content.author != loggedInUser.username && <li className="modal-box__item u-text-red-bold" onClick={notLikedPost} >I don't link this Post</li>}
                     <li className="modal-box__item" onClick={onClose}>Cancel</li>
                 </ul>
             </div>

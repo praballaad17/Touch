@@ -546,6 +546,27 @@ body {
     .modal-box__item > label {
       cursor: pointer; }
 
+.progress {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  padding: 1rem;
+  height: 5rem;
+  width: 45rem; }
+  .progress__bar {
+    position: absolute;
+    background-color: #ffb900;
+    width: 0%;
+    border-radius: 1rem;
+    height: 2rem;
+    z-index: 1; }
+  .progress__base {
+    position: absolute;
+    background-color: #a6a6a6;
+    width: 90%;
+    border-radius: 1rem;
+    height: 2rem; }
+
 @media (max-width: 56.25em) {
   .search__icon {
     display: none; } }
@@ -818,7 +839,8 @@ body {
 
 .login {
   display: flex;
-  height: 100vh; }
+  height: 100vh;
+  justify-content: center; }
   .login__hero {
     width: 50%;
     display: flex;
@@ -844,7 +866,9 @@ body {
       padding: 5rem 3rem;
       border: 1px solid #f7f7f7;
       border-radius: 1rem;
-      background-color: #fff; }
+      background-color: #fff;
+      width: 50rem;
+      box-shadow: 0 0 10px 10px #f7f7f7; }
       @media (max-width: 56.25em) {
         .login__box--sub {
           max-width: 50rem; } }

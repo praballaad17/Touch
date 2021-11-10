@@ -37,13 +37,11 @@ export default function Login() {
 
   return (
     <div className="login">
-      <div className="login__hero">
-        <img src="/images/iphone-with-profile.jpg" alt="iPhone with Instagram app" />
-      </div>
+   
       <div className="login__box">
         <div className="login__box--sub">
           <h1 className="login__box--head">
-            <img src="/images/logo.png" alt="Instagram" className="mt-2 w-6/12 mb-4" />
+            Touch
           </h1>
 
           {error && <p className="login__box--error">{error}</p>}

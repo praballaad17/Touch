@@ -10,7 +10,7 @@ export const getUserByUsername = async (usernameOrEmail) => {
         const response = await axios.get(`${apiEndpoint}/username/${usernameOrEmail}`);
         return response.data;
     } catch (err) {
-        console.log(err.response?.data.error);
+        throw err
     }
 }
 

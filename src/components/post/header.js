@@ -23,11 +23,7 @@ export default function Header({ username, profileImg, content, setProfile, phot
         <p className="font-bold">{username}</p>
       </Link>
       <div onClick={() => setModal(true)}><FontAwesomeIcon icon={faEllipsisV} /></div>
-      <PostModal content={content} open={isModal} onClose={() => setModal(false)} setProfile={setProfile} photosCollection={photosCollection} />
+      {isModal && <PostModal content={content} open={isModal} onClose={() => setModal(false)}  />}
     </div>
   );
 }
-
-Header.propTypes = {
-  username: PropTypes.string.isRequired
-};
