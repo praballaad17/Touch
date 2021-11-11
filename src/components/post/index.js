@@ -21,12 +21,12 @@ export default function Post({ content, postref, setProfile, photosCollection, u
     if (author === loggedInUser?.username) 
       setProfileImg(loggedInUser?.displayImg.profileImg)
     
-      else {
-        const result = await getuserDisplayImgs(author)
-        console.log(result);
-        setProfileImg(result?.displayImg.profileImg)
+      // else {
+      //   const result = await getuserDisplayImgs(author)
+      //   console.log(result);
+      //   setProfileImg(result?.displayImg.profileImg)
         
-      }
+      // }
   })
   
 
