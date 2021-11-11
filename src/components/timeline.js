@@ -7,10 +7,11 @@ import LoggedInUserContext from '../context/logged-in-user';
 import SearchBar from './leftbar/searchBar';
 import Post from './post';
 import ReactLoader from './loader';
+import { DEFAULT_IMAGE_PATH } from '../constants/paths';
 
 export default function Timeline(props) {
   const data = (props.location && props.location.data) || {};
-  const { loggedInUser, posts, loading, hasMore, error, setPosts, setPageNumber } = useContext(LoggedInUserContext);
+  const { setShow, loggedInUser, posts, loading, hasMore, error, setPosts, setPageNumber } = useContext(LoggedInUserContext);
   const [searchToggle, setSearchToggle] = useState(false)
 
   useEffect(() => {
@@ -34,6 +35,11 @@ export default function Timeline(props) {
     <TimeLineContext.Provider value={{ loggedInUser, posts, setPosts }}>
       <div className="container col-span-2">
         <div className="timeline__head">
+          <div className="timeline__head--profile" onClick={() => setShow(true)}>
+            <img className="link-list--proImg--small" src={loggedInUser?.displayImg.profileImg} onError={(e) => {
+              e.target.src = DEFAULT_IMAGE_PATH;
+            }} alt={loggedInUser?.username} />
+          </div>
           {!searchToggle && <h3 className="heading-main">Home</h3>}
           {searchToggle && <div className="timeline__head--search">
             <FontAwesomeIcon icon={faArrowLeft} onClick={() => { setSearchToggle(false) }} />

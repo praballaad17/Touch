@@ -1,21 +1,32 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Header from './header';
 import Image from './image';
 import Footer from './footer';
-
+import LoggedInUserContext from '../../context/logged-in-user';
+import {getuserDisplayImgs} from '../../services/userServices'
 
 export default function Post({ content, postref, setProfile, photosCollection, userProfileImg }) {
   const commentInput = useRef(null);
   const [profileImg, setProfileImg] = useState()
   const [payModel, setPayModel] = useState()
+  const { loggedInUser } = useContext(LoggedInUserContext)
   const handleFocus = () => commentInput.current.focus();
 
   const { caption, author, paid, fileNumber, _id } = content
 
-  useEffect(() => {
+  useEffect(async () => {
     if (userProfileImg) {
       setProfileImg(userProfileImg)
     }
+    if (author === loggedInUser?.username) 
+      setProfileImg(loggedInUser?.displayImg.profileImg)
+    
+      else {
+        const result = await getuserDisplayImgs(author)
+        console.log(result);
+        setProfileImg(result?.displayImg.profileImg)
+        
+      }
   })
   
 

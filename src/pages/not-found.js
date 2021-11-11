@@ -3,7 +3,7 @@ import Leftbar from '../components/leftbar';
 
 export default function NotFound() {
   useEffect(() => {
-    document.title = 'Not Found - Touch';
+    document.title = 'Not Found | Touch';
   }, []);
 
   return (

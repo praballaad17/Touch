@@ -5,6 +5,7 @@ import { faBookmark, faCog, faIdCard, faList, faSignOutAlt, faTimes, faUniversit
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { logout } from '../services/authenticationServices';
 import ReactDom from 'react-dom'
+import { DEFAULT_IMAGE_PATH } from '../constants/paths';
 
 export default function ToggleBar({ show, onClose, loggedInUser }) {
     if (!show) return null
@@ -16,15 +17,29 @@ export default function ToggleBar({ show, onClose, loggedInUser }) {
                     <FontAwesomeIcon icon={faTimes} />
                 </div>
                 <ul>
-                    <li className="toggle-sidebar__item">
-                        <Link className="toggle-sidebar__link" to={`/user/${loggedInUser?.username}`} aria-label="Dashboard">
-                            <span className="toggle-sidebar__link--icon">
-                                <FontAwesomeIcon icon={faUser} /></span>
-                            <span className="toggle-sidebar__link--text">Profile</span>
-                        </Link>
-                    </li>
+
                     {loggedInUser ? (
                         <>
+                            <li className="toggle-sidebar__item">
+                                <Link className="toggle-sidebar__link u-display-phone" to={`/user/${loggedInUser?.username}`} aria-label="Profile">
+                                    <img className="link-list--proImg" src={loggedInUser?.displayImg.profileImg} onError={(e) => {
+                                        e.target.src = DEFAULT_IMAGE_PATH;
+                                    }} alt={loggedInUser?.username} />
+                                    <div className="toggle-sidebar__name">{loggedInUser?.fullName}</div>
+                                    <div className="toggle-sidebar__username">@{loggedInUser?.username}</div>
+                                    <div className="toggle-sidebar__counts">
+                                        <div>{loggedInUser?.followers.length} followers</div>
+                                        <div>{loggedInUser?.following.length} following</div>
+                                    </div>
+                                </Link>
+                            </li>
+                            <li className="toggle-sidebar__item">
+                                <Link className="toggle-sidebar__link" to={`/user/${loggedInUser?.username}`} aria-label="Dashboard">
+                                    <span className="toggle-sidebar__link--icon">
+                                        <FontAwesomeIcon icon={faUser} /></span>
+                                    <span className="toggle-sidebar__link--text">Profile</span>
+                                </Link>
+                            </li>
                             <li className="toggle-sidebar__item">
                                 <Link className="toggle-sidebar__link" to={ROUTES.DASHBOARD} aria-label="Dashboard">
                                     <span className="toggle-sidebar__link--icon">

@@ -72,7 +72,7 @@ body {
   font-weight: 400;
   font-size: 1.6rem;
   line-height: 1.7;
-  color: #777; }
+  color: black; }
 
 .heading-primary {
   color: #fff;
@@ -149,6 +149,12 @@ body {
     .u-margin-bottom-big {
       margin-bottom: 5rem !important; } }
 
+.u-display-phone {
+  display: none; }
+  @media (max-width: 37.5em) {
+    .u-display-phone {
+      display: inline-block; } }
+
 .u-opacity-50 {
   opacity: 50%; }
 
@@ -184,16 +190,25 @@ body {
     .link-list {
       padding-right: 0rem; } }
   .link-list--proImg {
-    width: 4rem;
-    height: 4rem;
+    width: 5rem;
     border-radius: 50%;
     display: inline-block; }
+    .link-list--proImg--small {
+      border-radius: 50%;
+      display: inline-block;
+      width: 4rem; }
+    @media (max-width: 56.25em) {
+      .link-list--proImg {
+        width: 6rem; } }
   .link-list-item {
     margin: 1rem 0;
     border-radius: 5rem;
-    padding: 0.5rem 1rem; }
+    padding: 0.5rem 1rem;
+    font-size: 2rem; }
     @media (max-width: 75em) {
       .link-list-item {
+        font-size: 3rem;
+        margin: 2rem 0;
         padding: 0rem 0rem;
         border-radius: 50%; } }
     .link-list-item--newpost {
@@ -209,8 +224,8 @@ body {
   display: flex;
   align-items: center; }
   .link--icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     display: inline-block;
     text-align: center; }
     .link--icon > svg {
@@ -237,7 +252,12 @@ body {
   height: 100vh;
   width: 25rem;
   z-index: 1000;
-  background-color: #fff; }
+  background-color: #fff;
+  overflow-y: scroll; }
+  @media (max-width: 75em) {
+    .toggle-sidebar {
+      width: 42rem;
+      padding-top: 1rem; } }
   .toggle-sidebar__close {
     width: 4rem;
     height: 4rem;
@@ -256,9 +276,30 @@ body {
     padding: 0.5rem 1rem; }
     .toggle-sidebar__item:hover {
       background-color: #e4e4e4; }
-  .toggle-sidebar__link {
+    @media (max-width: 56.25em) {
+      .toggle-sidebar__item {
+        margin: 2rem 0;
+        padding: 0.5rem 2rem; } }
+  .toggle-sidebar__name {
+    margin-top: 2rem;
+    font-size: 3rem;
+    font-weight: bold;
+    line-height: 3rem;
+    margin-left: 1rem; }
+  .toggle-sidebar__username {
+    color: #777;
+    line-height: 3rem;
+    margin-left: 1rem; }
+  .toggle-sidebar__counts {
     display: flex;
-    align-items: center; }
+    margin-top: 2rem; }
+    .toggle-sidebar__counts > div:last-child {
+      margin-left: 1rem; }
+  .toggle-sidebar__link {
+    font-size: 2rem; }
+    @media (max-width: 56.25em) {
+      .toggle-sidebar__link {
+        font-size: 3rem; } }
     .toggle-sidebar__link--icon {
       width: 32px;
       height: 32px;
@@ -269,7 +310,6 @@ body {
         height: 32px; }
     .toggle-sidebar__link--text {
       display: inline-block;
-      font-size: 2rem;
       margin-left: 1.2rem; }
 
 .togglebar-overlay {
@@ -421,10 +461,20 @@ body {
   border-bottom: 2px solid #e4e4e4;
   display: flex;
   justify-content: space-between;
-  align-items: center; }
+  align-items: center;
+  font-size: 2rem; }
+  @media (max-width: 112.5em) {
+    .timeline__head--profile {
+      display: none; } }
+  @media (max-width: 37.5em) {
+    .timeline__head--profile {
+      display: inline-block; } }
   .timeline__head--search {
     display: flex;
     align-items: center; }
+    @media (max-width: 37.5em) {
+      .timeline__head--search {
+        width: 85%; } }
     @media (max-width: 112.5em) {
       .timeline__head--searchbtn {
         display: none; } }
@@ -586,7 +636,7 @@ body {
       width: 2rem !important; }
   @media (max-width: 56.25em) {
     .search-box {
-      width: 65rem;
+      width: 90%;
       max-width: 65rem !important; } }
   @media (max-width: 37.5em) {
     .search-box {
@@ -606,10 +656,11 @@ body {
       max-width: 65rem !important; } }
   @media (max-width: 37.5em) {
     .search__input {
-      width: 90vw;
+      width: 90%;
       max-width: 90vw !important; } }
 
 .search-result {
+  display: inline-block;
   background-color: #fff;
   width: 28rem;
   max-height: 40rem;
@@ -626,7 +677,7 @@ body {
       top: 5.4rem; } }
   @media (max-width: 37.5em) {
     .search-result {
-      width: 90vw;
+      width: 85%;
       max-width: 90vw !important; } }
   .search-result__user {
     width: 28rem;

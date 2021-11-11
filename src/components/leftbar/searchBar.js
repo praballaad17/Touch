@@ -13,6 +13,7 @@ export default function SearchBar() {
 
     const handleSearch = (e) => {
         // e.preventDefault() 
+        console.log(e.target.value.length)
         setSearch(e.target.value)
         setPageNumber(1)
     }
@@ -35,7 +36,7 @@ export default function SearchBar() {
     return (
         <>
             <div className="search-box">
-                <input id="input" className="search__input" onChange={handleSearch} placeholder="Search Users" />
+                <input id="input" className="search__input" autoComplete="off" onChange={handleSearch} placeholder="Search Users" />
                 {!search && <div className="search__icon"><FontAwesomeIcon icon={faSearch} /></div>}
                 {search && !loading && <FontAwesomeIcon onClick={handleClear} icon={faTimes} />}
                 {loading && <img className="search__loading" src={LOADING_ANI_PATH} />}

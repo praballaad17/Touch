@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { useHistory } from "react-router-dom";
 import { faImage, faLock } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -11,6 +11,9 @@ import ProgressModal from './progressModal';
 // import sharp from 'sharp'
 
 export default function Newpost() {
+    useEffect(() => {
+        document.title = 'New Post | Touch';
+    }, []);
     const { loggedInUser } = useContext(LoggedInUserContext);
     const { setPosts } = usePhotos()
     const [selectedFiles, setSelectedFiles] = useState()

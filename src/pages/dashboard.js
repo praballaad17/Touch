@@ -1,6 +1,5 @@
-import { useEffect, lazy, Suspense, useState } from 'react';
-import { BrowserRouter as Router, Link, Route, Switch, useRouteMatch } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { useEffect, lazy, useState } from 'react';
+import { Link, Route, Switch, useRouteMatch } from 'react-router-dom';
 import { faBell, faHome, faMailBulk, faPlusSquare, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as ROUTES from '../constants/routes';
@@ -10,7 +9,6 @@ import Leftbar from '../components/leftbar';
 import SearchBar from '../components/leftbar/searchBar';
 import ToggleBar from '../components/toggleBar';
 import usePhotos from '../hooks/use-photos';
-import ReactLoader from '../components/loader';
 import NotFound from './not-found';
 
 const Profile = lazy(() => import('./profile'));
@@ -51,17 +49,14 @@ export default function Dashboard({ user }) {
             <span className="phonebar__link--icon">
               <FontAwesomeIcon icon={faMailBulk} /></span>
           </Link>
-          <Link className="phonebar__link" onClick={() => setShow(true)} aria-label="Dashboard">
-            <span className="phonebar__link--icon">
-              <FontAwesomeIcon icon={faUser} /></span>
-          </Link>
+
         </div>
       </>
     )
   }
 
   return (
-    <LoggedInUserContext.Provider value={{ loggedInUser, setActiveUser, posts, loading, setPosts, error, hasMore, setPageNumber }}>
+    <LoggedInUserContext.Provider value={{ setShow, loggedInUser, setActiveUser, posts, loading, setPosts, error, hasMore, setPageNumber }}>
 
       {/* <Header /> */}
 
