@@ -8,13 +8,14 @@ import usePhotos from '../../hooks/use-photos'
 import { DASHBOARD } from '../../constants/routes'
 import TimeLineContext from '../../context/timeline'
 import ProfileContext from '../../context/profile'
+import { deleteImgInStorage } from '../../services/resizeService'
+import { async } from '@firebase/util'
 
 export default function PostModal({ open, content, onClose }) {
     const [profileImg, setProfileImg] = useState()
     const { loggedInUser } = useContext(LoggedInUserContext)
     const { posts, setPosts, userPost, setuserPost } = useContext(TimeLineContext)
     const { pathname } = useLocation()
-
     if (!open) return null
 
     const unfollow = async () => {
@@ -31,20 +32,22 @@ export default function PostModal({ open, content, onClose }) {
         // setPosts(posts.filter(item => item._id != content._id))
         onClose()
     }
+    const deletePost = async () => {
 
-    const deletePost = () => {
-        if (pathname == "/") {
-            setPosts(posts.filter(item => item._id != content._id))
-            // window.location = pathname
+        try {
+            for (let i = 0; i < content.fileNumber; i++) {
+                deleteImgInStorage(`/file/${content?.author}/${content._id}/${content?.fileNames[i]}`)
+            }
+            await deletePostById(content._id)
+
+            if (pathname == "/") {
+                setPosts(posts.filter(item => item._id != content._id))
+            }
+            else {
+                setuserPost(userPost.filter(item => item._id != content._id))
+            }
         }
-        else {
-            setuserPost(userPost.filter(item => item._id != content._id))
-            // window.location = pathname
-        }
-        deletePostById(content._id).then(() => {
-
-
-        }).catch(e => {
+        catch (e) {
             alert("Error while deleting the Post, generally check your internet");
             console.log(e, content);
             if (pathname == "/") {
@@ -55,7 +58,7 @@ export default function PostModal({ open, content, onClose }) {
                 setuserPost(prevPost => [...prevPost, content])
             }
 
-        })
+        }
     }
 
     return ReactDom.createPortal(

@@ -3,10 +3,10 @@ import { apiUrl } from "../config.json";
 
 const apiEndpoint = apiUrl + "/post";
 
-export const postByUsername = async (files, caption, username, paid, price, progressFn) => {
+export const postByUsername = async (files, fileNames, postId, caption, username, progressFn) => {
     try {
         const { data } = await axios.post(`${apiEndpoint}/${username}`,
-            { files, caption, paid, price }, progressFn);
+            { files, fileNames, postId, caption }, progressFn);
         return { data };
     } catch (err) {
         console.log(err);

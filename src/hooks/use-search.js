@@ -30,7 +30,6 @@ export default function useSearch(query, pageNumber) {
                 params: { page: pageNumber, limit: 5 },
                 cancelToken: new axios.CancelToken(c => cancel = c)
             }).then((res) => {
-                console.log(res);
                 setMore(res.data.length > 0)
                 setLoading(false)
                 setResult(res.data)

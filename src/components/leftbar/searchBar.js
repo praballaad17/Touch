@@ -13,7 +13,6 @@ export default function SearchBar() {
 
     const handleSearch = (e) => {
         // e.preventDefault() 
-        console.log(e.target.value.length)
         setSearch(e.target.value)
         setPageNumber(1)
     }

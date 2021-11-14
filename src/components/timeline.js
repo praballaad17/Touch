@@ -10,6 +10,9 @@ import ReactLoader from './loader';
 import { DEFAULT_IMAGE_PATH } from '../constants/paths';
 
 export default function Timeline(props) {
+  useEffect(() => {
+    document.title = 'Home | Touch';
+  }, []);
   const data = (props.location && props.location.data) || {};
   const { setShow, loggedInUser, posts, loading, hasMore, error, setPosts, setPageNumber } = useContext(LoggedInUserContext);
   const [searchToggle, setSearchToggle] = useState(false)

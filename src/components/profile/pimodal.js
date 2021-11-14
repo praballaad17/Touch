@@ -4,11 +4,10 @@ import ReactDom from 'react-dom'
 import { useHistory } from 'react-router'
 import LoggedInUserContext from '../../context/logged-in-user'
 import TimeLineContext from '../../context/timeline'
-import { resizeImage } from '../../services/postServices'
+import { deleteImgInStorage, imageResize, uploadFileToStorage } from '../../services/resizeService'
 import { updateProfileImg, removeProfileImg } from '../../services/userServices'
 
 export default function PIModal({ open, onClose, displayImgs }) {
-
     const [profileImg, setProfileImg] = useState()
     const { user, setUser } = useContext(TimeLineContext);
     const { loggedInUser, setActiveUser } = useContext(LoggedInUserContext);
@@ -23,6 +22,7 @@ export default function PIModal({ open, onClose, displayImgs }) {
             setActiveUser({ ...loggedInUser, displayImg: { profileImg: "" } })
             setUser({ ...user, displayImg: { profileImg: "" } })
             onClose()
+            deleteImgInStorage(`/file/${user?.username}/displayImg/profileImg`)
             await removeProfileImg(user.username)
         } catch (error) {
             console.log(error);
@@ -33,39 +33,40 @@ export default function PIModal({ open, onClose, displayImgs }) {
         if (!e.target.files.length) return;
         const file = e.target.files[0]
         console.log(file.size / 1024);
+
         if ((file.size / 1024) > 800) {
-            let form = new FormData()
-            form.append('image', file)
-            const resizeimage = await resizeImage(form)
-            console.log(resizeimage.length / 1024);
-            setActiveUser({ ...loggedInUser, displayImg: { profileImg: resizeimage } })
-            setUser({ ...user, displayImg: { profileImg: resizeimage } })
+            console.log("more");
+            const resizeImage = await imageResize(file)
+            setActiveUser({ ...loggedInUser, displayImg: { profileImg: URL.createObjectURL(resizeImage) } })
+            setUser({ ...user, displayImg: { profileImg: URL.createObjectURL(resizeImage) } })
             onClose()
-            const result = await updateProfileImg(user.username, resizeimage)
+            const imageUrl = await uploadFileToStorage(resizeImage, `/file/${user?.username}/displayImg/profileImg`)
+            console.log(imageUrl);
+            try {
+                const result = await updateProfileImg(user.username, imageUrl)
+                console.log(result);
+            } catch (error) {
+                console.log(error);
+            }
         }
         else {
             console.log(file.size / 1024);
-            let reader = new FileReader();
-            // Convert the file to base64 text
-            reader.readAsDataURL(e.target.files[0]);
-            // on reader load somthing...
-            reader.onload = async () => {
-                // Make a fileInfo Object
-                const baseURL = reader.result;
-                setActiveUser({ ...loggedInUser, displayImg: { profileImg: baseURL } })
-                setUser({ ...user, displayImg: { profileImg: baseURL } })
-                onClose()
-                try {
-                    const result = await updateProfileImg(user.username, baseURL)
-                    console.log(result);
-                } catch (error) {
-                    console.log(error);
-                }
-
+            setActiveUser({ ...loggedInUser, displayImg: { profileImg: URL.createObjectURL(file) } })
+            setUser({ ...user, displayImg: { profileImg: URL.createObjectURL(file) } })
+            onClose()
+            const imageUrl = await uploadFileToStorage(file, `/file/${user?.username}/displayImg/profileImg`)
+            console.log(imageUrl);
+            try {
+                const result = await updateProfileImg(user.username, imageUrl)
+                console.log(result);
+            } catch (error) {
+                console.log(error);
             }
-        }
 
+        }
     }
+
+
 
     return ReactDom.createPortal(
         <>

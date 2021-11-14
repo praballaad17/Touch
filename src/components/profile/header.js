@@ -22,7 +22,7 @@ export default function Header({
   const [isfollowingModal, setIsfollowingModal] = useState(false)
   const { _id: profileUserId, fullName, followers, following, username: profileUsername, displayImg } = user
   const activeBtnFollow = loggedInUser?.username && loggedInUser?.username !== profileUsername;
-  console.log(loggedInUser);
+
   const handleToggleFollow = async () => {
     setIsFollowingProfile((isFollowingProfile) => !isFollowingProfile);
     setfollowerCount(isFollowingProfile ? followerCount - 1 : followerCount + 1);
@@ -46,7 +46,7 @@ export default function Header({
 
     else return
   }
-  console.log(user)
+
   return (
     <>
       <div className="grid grid-cols-3 gap-4 justify-between mx-auto max-w-screen-lg">

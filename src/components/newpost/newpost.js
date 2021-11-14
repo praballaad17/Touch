@@ -1,40 +1,52 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { useHistory } from "react-router-dom";
+import { useHistory, Prompt } from "react-router-dom";
 import { faImage, faLock } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Resizer from "react-image-file-resizer";
+import { v4 as uuidV4 } from "uuid"
 import UploadPreview from './uploadPreview'
 import LoggedInUserContext from '../../context/logged-in-user'
 import usePhotos from '../../hooks/use-photos'
 import { DASHBOARD } from '../../constants/routes'
-import { postByUsername, resizeImage } from '../../services/postServices';
+import { postByUsername } from '../../services/postServices';
 import ProgressModal from './progressModal';
-// import sharp from 'sharp'
+import { storage } from '../../firebase';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import useUnsaveAlert from '../../hooks/useUnsaveAlert';
+import { uploadFileToStorage } from '../../services/resizeService';
 
 export default function Newpost() {
     useEffect(() => {
         document.title = 'New Post | Touch';
+        setPostId(uuidV4())
     }, []);
+
     const { loggedInUser } = useContext(LoggedInUserContext);
     const { setPosts } = usePhotos()
-    const [selectedFiles, setSelectedFiles] = useState()
     const [filePreviw, setFilePreviw] = useState([])
-    const [files, setFiles] = useState([])
-    const [paid, setPaid] = useState(false)
+    const [uploading, setUploading] = useState(false)
+    const [subfiles, setSubfiles] = useState([])
+    const [subfilesName, setSubfilesName] = useState([])
     const [caption, setCaption] = useState("")
-    const [price, setPrice] = useState()
     const [progress, setProgress] = useState("")
     const [pgModal, setpgModal] = useState(false)
-    let [result, setResult] = useState();
+    const [postId, setPostId] = useState()
     let history = useHistory()
+
+
+    const resizeFile = (file) =>
+        new Promise((resolve) => {
+            Resizer.imageFileResizer(file, 640, 480, "JPEG", 100, 0, (uri) => resolve(uri), "file");
+        });
 
     const handleFileUpload = async (e) => {
         if (!e.target.files.length) return;
         const file = e.target.files[0]
-        let form = new FormData()
-        form.append('image', file)
-        const resizeimage = await resizeImage(form)
-        setFilePreviw(prevFile => [...prevFile, resizeimage])
-        setFiles(prevFiles => [...prevFiles, resizeimage])
+        const resizeImage = await resizeFile(file);
+        setFilePreviw(prevFile => [...prevFile, URL.createObjectURL(resizeImage)])
+        const filename = uuidV4()
+        setSubfiles(prevFiles => [...prevFiles, resizeImage])
+        setSubfilesName(prevFilename => [...prevFilename, filename])
     }
 
     const handleCaption = (e) => {
@@ -42,9 +54,10 @@ export default function Newpost() {
     }
 
     const handleFileCross = (name) => {
-        setFilePreviw(filePreviw.filter(item => item != name))
         const index = filePreviw.indexOf(name)
-        setFiles(files.splice(index, 1))
+        setFilePreviw(filePreviw.filter(item => item != name))
+        subfiles.splice(index, 1)
+        subfilesName.splice(index, 1)
     }
 
     const progressFn = {
@@ -55,16 +68,21 @@ export default function Newpost() {
         }
     }
 
-    const isPaid = () => {
-        setPaid(!paid)
-    }
 
     const handleSubmit = async () => {
+        let files = [];
+        setUploading(true)
+        setpgModal(true)
+        for (let i = 0; i < subfiles.length; i++) {
+            const fileurl = await uploadFileToStorage(subfiles[i], `/file/${loggedInUser?.username}/${postId}/${subfilesName[i]}`)
+            files.push(fileurl)
+        }
+
         try {
-            setpgModal(true)
-            const { data } = await postByUsername(files, caption, loggedInUser.username, paid, price, progressFn)
+            const { data } = await postByUsername(files, subfilesName, postId, caption, loggedInUser.username, progressFn)
             // const res = await postByUsername(formData, loggedInUser.username)
             setPosts(prevPost => [...prevPost, data])
+            setUploading(false)
             history.push({
                 pathname: DASHBOARD,
                 data
@@ -77,10 +95,10 @@ export default function Newpost() {
 
     return (
         <>
+
             <div className="newpost__head">
                 <h3 className="heading-tertiary">New Post</h3>
                 <div>
-                    <FontAwesomeIcon className={`newpost__lock`} onClick={isPaid} icon={faLock} />
                     <button className="btn btn--grey" onClick={handleSubmit}>Post</button>
                 </div>
             </div>
@@ -93,7 +111,6 @@ export default function Newpost() {
                     <FontAwesomeIcon icon={faImage} />
                     <input type="file" style={{ opacity: 0, position: "absolute", left: "-99999px" }} onChange={handleFileUpload} />
                 </label>
-                <input type="text" placeholder="Price You Select" onChange={(e) => setPrice(e.target.value)} />
             </div>
 
             {pgModal && <ProgressModal open={pgModal} progress={progress} onClose={() => setpgModal(false)} />}

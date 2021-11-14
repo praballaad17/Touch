@@ -191,15 +191,18 @@ body {
       padding-right: 0rem; } }
   .link-list--proImg {
     width: 5rem;
+    height: 5rem;
     border-radius: 50%;
     display: inline-block; }
     .link-list--proImg--small {
       border-radius: 50%;
       display: inline-block;
-      width: 4rem; }
+      width: 4rem;
+      height: 4rem; }
     @media (max-width: 56.25em) {
       .link-list--proImg {
-        width: 6rem; } }
+        width: 6rem;
+        height: 6rem; } }
   .link-list-item {
     margin: 1rem 0;
     border-radius: 5rem;

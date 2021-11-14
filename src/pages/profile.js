@@ -9,6 +9,11 @@ import LoggedInUserContext from '../context/logged-in-user';
 export default function Profile(props) {
   const { username } = useParams();
   const { loggedInUser } = useContext(LoggedInUserContext)
+
+  useEffect(() => {
+    document.title = `${username} | Touch`;
+  }, []);
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false)
   const history = useHistory();
