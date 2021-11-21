@@ -1,17 +1,13 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import * as ROUTES from '../constants/routes';
-import { Link, Route, useHistory } from 'react-router-dom';
-import { faBars, faBell, faBookmark, faChild, faCog, faHome, faIdCard, faList, faMailBulk, faPlus, faSignOutAlt, faUniversity, faUser } from "@fortawesome/free-solid-svg-icons";
+import { Link } from 'react-router-dom';
+import { faBars, faBell, faBookmark, faHome, faList, faMailBulk, faPlus, faSignOutAlt, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import useUser from '../hooks/use-user';
 import ToggleBar from './toggleBar';
 import { DEFAULT_IMAGE_PATH } from '../constants/paths';
-import LoggedInUserContext from '../context/logged-in-user';
 
-export default function Leftbar({ loggedInUser }) {
+export default function Leftbar({ loggedInUser, user }) {
     const [show, setShow] = useState(false)
-    // const { loggedInUser } = useContext(LoggedInUserContext);
-    const history = useHistory();
 
     return (
         <>
@@ -23,21 +19,22 @@ export default function Leftbar({ loggedInUser }) {
                 <ul className="link-list">
                     <li className="link-list-item">
                         <Link className="u-center-text" to={`/user/${loggedInUser?.username}`} aria-label="Profile">
-                            <img className="link-list--proImg" src={loggedInUser?.displayImg.profileImg} onError={(e) => {
-                                e.target.src = DEFAULT_IMAGE_PATH;
-                            }} alt={loggedInUser?.username} />
+                            <img className="link-list--proImg" src={
+                                loggedInUser?.displayImg?.profileImg.length ? loggedInUser?.displayImg?.profileImg : DEFAULT_IMAGE_PATH}
+
+                                alt={loggedInUser?.username} />
                             <span className="link--text">{loggedInUser?.username}</span>
                         </Link>
                     </li>
                     <li className="link-list-item">
-                        <Link className="link" to={ROUTES.DASHBOARD} aria-label="Dashboard">
+                        <Link className="link" to={ROUTES.TIMELINE} aria-label="Dashboard">
                             <span className="link--icon">
                                 <FontAwesomeIcon icon={faHome} /></span>
                             <span className="link--text">Home</span>
                         </Link>
                     </li>
-                    {loggedInUser && <> <li className="link-list-item">
-                        <Link className="link" to={ROUTES.DASHBOARD} aria-label="Dashboard">
+                    {user && <> <li className="link-list-item">
+                        <Link className="link" to={ROUTES.TIMELINE} aria-label="Dashboard">
                             <span className="link--icon">
                                 <FontAwesomeIcon icon={faBell} />
                             </span>
@@ -45,7 +42,7 @@ export default function Leftbar({ loggedInUser }) {
                         </Link>
                     </li>
                         <li className="link-list-item">
-                            <Link className="link" to={`${ROUTES.MESSAGES}`} aria-label="Messages">
+                            <Link className="link" to={ROUTES.MESSAGES} aria-label="Messages">
                                 <span className="link--icon">
                                     <FontAwesomeIcon icon={faMailBulk} />
                                 </span>
@@ -53,25 +50,25 @@ export default function Leftbar({ loggedInUser }) {
                             </Link>
                         </li>
                         <li className="link-list-item">
-                            <Link className="link" to={ROUTES.DASHBOARD} aria-label="Dashboard">
+                            <Link className="link" to={ROUTES.TIMELINE} aria-label="Dashboard">
                                 <span className="link--icon"><FontAwesomeIcon icon={faBookmark} /></span>
                                 <span className="link--text">Bookmarks</span>
                             </Link>
                         </li>
                         <li className="link-list-item">
-                            <Link className="link" to={ROUTES.DASHBOARD} aria-label="Dashboard">
+                            <Link className="link" to={ROUTES.TIMELINE} aria-label="Dashboard">
                                 <span className="link--icon">
                                     <FontAwesomeIcon icon={faList} /></span>
                                 <span className="link--text">List</span>
                             </Link>
                         </li>
-                        <li className="link-list-item">
-                            <Link className="link" to={ROUTES.DASHBOARD} aria-label="Dashboard">
+                        {/* <li className="link-list-item">
+                            <Link className="link" to={ROUTES.TIMELINE} aria-label="Dashboard">
                                 <span className="link--icon">
                                     <FontAwesomeIcon icon={faChild} /></span>
                                 <span className="link--text">Subscription</span>
                             </Link>
-                        </li>
+                        </li> */}
                         <li className="link-list-item">
                             <Link className="link" to={`/user/${loggedInUser?.username}`} aria-label="Dashboard">
                                 <span className="link--icon">
@@ -88,7 +85,7 @@ export default function Leftbar({ loggedInUser }) {
                             <span className="link--text">More</span>
                         </Link>
                     </li>
-                    {loggedInUser ? (
+                    {user ? (
                         <li className="link-list-item link-list-item--newpost" >
                             <Link className="link" to={ROUTES.NEWPOST} aria-label="Newpost">
                                 <span className="link--icon">
