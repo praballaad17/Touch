@@ -8,21 +8,22 @@ import { getuserDisplayImgs } from '../../services/userServices';
 export default function Post({ content, postref, setProfile, photosCollection, userProfileImg }) {
   const commentInput = useRef(null);
   const [profileImg, setProfileImg] = useState()
-  const [payModel, setPayModel] = useState()
-  const handleFocus = () => commentInput.current.focus();
+  // const [payModel, setPayModel] = useState()
 
-  const { caption, author, fileNumber, _id } = content
+  const { caption, author, fileNumber, _id, files } = content
 
-  useEffect(async () => {
-    const result = await getuserDisplayImgs(author)
-    console.log(result);
-    setProfileImg(result?.displayImg.profileImg)
+  useEffect(() => {
+    async function getimg() {
+      const result = await getuserDisplayImgs(author)
+      setProfileImg(result?.displayImg.profileImg)
+    }
+    getimg()
   }, [content])
 
 
-  const handlePay = () => {
-    setPayModel(true)
-  }
+  // const handlePay = () => {
+  //   setPayModel(true)
+  // }
 
   // const result = caption.charCodeAt(0)
   // console.log(caption, result);
@@ -33,7 +34,7 @@ export default function Post({ content, postref, setProfile, photosCollection, u
       <Header content={content} username={author} profileImg={profileImg} setProfile={setProfile} photosCollection={photosCollection} />
       {content ? (
         <>
-          <Image caption={author} fileNumber={fileNumber} postId={_id} />
+          <Image caption={author} files={files} fileNumber={fileNumber} postId={_id} />
         </>
       ) : (
         <div>not found</div>

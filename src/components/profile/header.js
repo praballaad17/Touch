@@ -1,12 +1,11 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
 import { useState, useEffect, useContext } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import useUser from '../../hooks/use-user';
 import { toggleFollow } from '../../services/userServices';
-import UserContext from '../../context/user';
 import { DEFAULT_IMAGE_PATH } from '../../constants/paths';
 import PIModal from './pimodal'
 import FollowerModal from './followerModal';
+import { useUser } from '../../context/userProvider';
 
 export default function Header({
   photosCount,
@@ -14,15 +13,14 @@ export default function Header({
   setfollowerCount,
   user
 }) {
-  const { user: loggedInUser } = useContext(UserContext);
-  // const { user } = useUser(loggedInUser?.username);
+  const { user: loggedInUser } = useUser();
   const [isFollowingProfile, setIsFollowingProfile] = useState(null);
   const [ispiModal, setIspiModal] = useState(false)
   const [isfollowerModal, setIsfollowerModal] = useState(false)
   const [isfollowingModal, setIsfollowingModal] = useState(false)
   const { _id: profileUserId, fullName, followers, following, username: profileUsername, displayImg } = user
   const activeBtnFollow = loggedInUser?.username && loggedInUser?.username !== profileUsername;
-
+  // console.log(displayImg);
   const handleToggleFollow = async () => {
     setIsFollowingProfile((isFollowingProfile) => !isFollowingProfile);
     setfollowerCount(isFollowingProfile ? followerCount - 1 : followerCount + 1);
@@ -49,17 +47,17 @@ export default function Header({
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-4 justify-between mx-auto max-w-screen-lg">
-        <div className="container flex justify-center items-center">
+      <div className="profile__header">
+        <div className="profile__header-imgbox">
           {profileUsername ? (
             <img
               onClick={handleProfileImg}
-              className="rounded-full h-40 w-40 flex"
+              className="profile__header-img"
               alt={`${fullName} profile picture`}
-              src={displayImg ? displayImg.profileImg : DEFAULT_IMAGE_PATH}
-              onError={(e) => {
-                e.target.src = DEFAULT_IMAGE_PATH;
-              }}
+              src={displayImg && displayImg?.profileImg.length ? displayImg.profileImg : DEFAULT_IMAGE_PATH}
+            // onError={(e) => {
+            //   e.target.src = DEFAULT_IMAGE_PATH;
+            // }}
             />
           ) : (
             <Skeleton circle height={150} width={150} count={1} />
@@ -68,16 +66,15 @@ export default function Header({
 
         <PIModal displayImgs={displayImg} open={ispiModal} onClose={() => setIspiModal(false)} />
 
-        <div className="flex items-center justify-center flex-col col-span-2">
-          <div className="container flex items-center">
-            <p className="text-2xl mr-4">{profileUsername}</p>
+        <div className="profile__header-info">
+          <div className="profile__header-info-head">
+            <p className="text-2xl mr-4">@{profileUsername}</p>
             {activeBtnFollow && isFollowingProfile === null ? (
               <Skeleton count={1} width={60} height={32} />
             ) : (
               activeBtnFollow && (
                 <button
-                  className="bg-blue-medium font-bold text-sm rounded text-white w-20 h-8"
-                  type="button"
+                  className={`btn-follow ${isFollowingProfile ? 'btn-follow-f' : 'btn-follow-u'}`} type="button"
                   onClick={handleToggleFollow}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter') {
@@ -90,21 +87,21 @@ export default function Header({
               )
             )}
           </div>
-          <div className="container flex mt-4">
+          <div className="profile__header-info-follow">
             {!followers || !following ? (
               <Skeleton count={1} width={500} height={24} />
             ) : (
               <>
-                <p className="mr-10">
+                <p className="profile__header-info-follow-count">
                   <span className="font-bold">{photosCount}</span> photos
                 </p>
-                <p className="mr-10" onClick={() => setIsfollowerModal(true)}>
+                <p className="profile__header-info-follow-count" onClick={() => setIsfollowerModal(true)}>
                   <span className="font-bold">{followerCount}</span>
                   {` `}
                   {followerCount === 1 ? `follower` : `followers`}
                 </p>
                 <FollowerModal open={isfollowerModal} loggedInUser={loggedInUser} onClose={() => setIsfollowerModal(false)} />
-                <p className="mr-10" onClick={() => setIsfollowingModal(true)}>
+                <p className="profile__header-info-follow-count" onClick={() => setIsfollowingModal(true)}>
                   <span className="font-bold">{following?.length}</span> following
                 </p>
               </>

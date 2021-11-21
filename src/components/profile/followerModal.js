@@ -1,7 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
 import ReactDom from 'react-dom'
-import UserContext from '../../context/user'
 import { updateProfileImg, removeProfileImg } from '../../services/userServices'
 
 export default function FollowerModal({ open, user, onClose }) {

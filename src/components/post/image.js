@@ -1,28 +1,20 @@
-import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import BlankPost from './blankPost';
-import { getPostById } from '../../services/postServices';
 
-export default function Image({ fileNumber, caption, postId }) {
+export default function Image({ fileNumber, caption, postId, files }) {
   const [counter, setCounter] = useState(0)
-  const [files, setFiles] = useState([])
   const [loading, setLoading] = useState(false)
 
-  useEffect(async () => {
-    setLoading(true)
-    const result = await getPostById(postId)
-    setFiles(result)
-    setLoading(false)
-  }, [])
+
 
   const increase = () => {
-    if (counter == fileNumber - 1) return null
+    if (counter === fileNumber - 1) return null
     setCounter(counter + 1)
   }
   const decrease = () => {
-    if (counter == 0) return null
+    if (counter === 0) return null
     setCounter(counter - 1)
   }
 

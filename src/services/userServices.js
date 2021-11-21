@@ -49,6 +49,7 @@ export const removeProfileImg = async (username, profileImg) => {
 export const getuserDisplayImgs = async (username) => {
     try {
         const response = await axios.get(`${apiEndpoint}/display-imgs/${username}`);
+        console.log(response);
         return response.data;
     } catch (err) {
         console.log(err.response?.data.error);

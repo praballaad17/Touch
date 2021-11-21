@@ -1,19 +1,17 @@
-import React, { useContext, useState, useEffect } from 'react'
-import { useHistory, Prompt } from "react-router-dom";
-import { faImage, faLock } from '@fortawesome/free-solid-svg-icons'
+import React, { useState, useEffect } from 'react'
+import { useHistory } from "react-router-dom";
+import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Resizer from "react-image-file-resizer";
 import { v4 as uuidV4 } from "uuid"
 import UploadPreview from './uploadPreview'
-import LoggedInUserContext from '../../context/logged-in-user'
-import usePhotos from '../../hooks/use-photos'
-import { DASHBOARD } from '../../constants/routes'
+import { TIMELINE } from '../../constants/routes'
 import { postByUsername } from '../../services/postServices';
 import ProgressModal from './progressModal';
-import { storage } from '../../firebase';
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import useUnsaveAlert from '../../hooks/useUnsaveAlert';
 import { uploadFileToStorage } from '../../services/resizeService';
+import { useUser } from '../../context/userProvider';
+import { usePost } from '../../context/postProvider';
+import { useUserPost } from '../../context/userPostProvider';
 
 export default function Newpost() {
     useEffect(() => {
@@ -21,8 +19,9 @@ export default function Newpost() {
         setPostId(uuidV4())
     }, []);
 
-    const { loggedInUser } = useContext(LoggedInUserContext);
-    const { setPosts } = usePhotos()
+    const { user: loggedInUser } = useUser()
+    const { setTimeline } = usePost()
+    const { addToAllProfilePost } = useUserPost()
     const [filePreviw, setFilePreviw] = useState([])
     const [uploading, setUploading] = useState(false)
     const [subfiles, setSubfiles] = useState([])
@@ -55,7 +54,7 @@ export default function Newpost() {
 
     const handleFileCross = (name) => {
         const index = filePreviw.indexOf(name)
-        setFilePreviw(filePreviw.filter(item => item != name))
+        setFilePreviw(filePreviw.filter(item => item !== name))
         subfiles.splice(index, 1)
         subfilesName.splice(index, 1)
     }
@@ -81,10 +80,12 @@ export default function Newpost() {
         try {
             const { data } = await postByUsername(files, subfilesName, postId, caption, loggedInUser.username, progressFn)
             // const res = await postByUsername(formData, loggedInUser.username)
-            setPosts(prevPost => [...prevPost, data])
+            console.log(data);
+            setTimeline(prevPost => [data, ...prevPost])
+            addToAllProfilePost(loggedInUser?.username, data)
             setUploading(false)
             history.push({
-                pathname: DASHBOARD,
+                pathname: TIMELINE,
                 data
             })
         } catch (error) {

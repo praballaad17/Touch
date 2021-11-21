@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 
 export default function BlankPost({ height, width, counter }) {
     if (counter % 2) counter = 0
@@ -8,7 +7,7 @@ export default function BlankPost({ height, width, counter }) {
         1: "#abaaaa"
     }
     const divstyle = {
-        width: width, 
+        width: width,
         height: height,
         background: color[counter]
     }

@@ -15,7 +15,7 @@ export default function UploadPreview({ files, onChange }) {
             {files.map((file, index) => (
                 <div key={index} className="file-privew__item">
                     <FontAwesomeIcon icon={faWindowClose} className="file-privew__close" onClick={() => handleClose(file)} />
-                    <img src={file} />
+                    <img src={file} alt="upload-img" />
 
                 </div>
             ))}

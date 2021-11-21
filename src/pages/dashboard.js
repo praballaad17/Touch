@@ -1,19 +1,20 @@
 import { useEffect, lazy, useState } from 'react';
-import { Link, Route, Switch, useRouteMatch } from 'react-router-dom';
-import { faBell, faHome, faMailBulk, faPlusSquare, faUser } from "@fortawesome/free-solid-svg-icons";
+import { Link, Route, Switch, useLocation, Redirect } from 'react-router-dom';
+import { faBell, faHome, faMailBulk, faPlusSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as ROUTES from '../constants/routes';
-import useUser from '../hooks/use-user';
-import LoggedInUserContext from '../context/logged-in-user';
 import Leftbar from '../components/leftbar';
 import SearchBar from '../components/leftbar/searchBar';
 import ToggleBar from '../components/toggleBar';
-import usePhotos from '../hooks/use-photos';
 import NotFound from './not-found';
+import { useConversations } from '../context/conversationProvider';
+import { useUser } from '../context/userProvider';
+import ProtectedRoute from '../helpers/protected-route';
+// import MainLoader from '../loader/mainLoader';
 
 const Profile = lazy(() => import('./profile'));
 const Timeline = lazy(() => import('../components/timeline'));
-const Messages = lazy(() => import('../components/messages'));
+const Messages = lazy(() => import('../components/messages/messages'));
 const Newpost = lazy(() => import('../components/newpost/newpost'));
 
 export default function Dashboard({ user }) {
@@ -21,14 +22,10 @@ export default function Dashboard({ user }) {
     document.title = 'Touch';
   }, []);
   const [show, setShow] = useState(false)
-  const [pageNumber, setPageNumber] = useState(1)
-  const userId = user ? user.id : null
-  const username = user ? user.username : null
-  const { user: loggedInUser, setActiveUser } = useUser(username);
+  const { user: loggedInUser } = useUser();
+  const { selectedConversationGroupId } = useConversations()
 
-  const { posts, loading, hasMore, error, setPosts } = usePhotos(loggedInUser, pageNumber);
-  let { path, url } = useRouteMatch();
-
+  let location = useLocation();
   function Phonebar() {
     return (
       <>
@@ -55,41 +52,47 @@ export default function Dashboard({ user }) {
     )
   }
 
+
+  // else 
   return (
-    <LoggedInUserContext.Provider value={{ setShow, loggedInUser, setActiveUser, posts, loading, setPosts, error, hasMore, setPageNumber }}>
-
+    <>
       {/* <Header /> */}
-
       <div className="dashboard">
         <div className="dashboard__phonebar">
-          <Phonebar />
+          {!selectedConversationGroupId && <Phonebar />}
           <div className="dashboard__togglebar">
             <ToggleBar show={show} loggedInUser={loggedInUser} onClose={() => setShow(false)} />
           </div>
         </div>
         <div className="dashboard__leftbar">
-          <Leftbar loggedInUser={loggedInUser} path={path} url={url} />
+          <Leftbar loggedInUser={loggedInUser} user={user} />
         </div>
         <div className="dashboard__main">
-          {/* <Suspense fallback={<ReactLoader />}> */}
           <Switch>
             <Route path={ROUTES.PROFILE} component={Profile} />
-            <Route path={ROUTES.DASHBOARD} component={Timeline} exact />
-            <Route path={ROUTES.MESSAGES} component={Messages} />
-            <Route path={ROUTES.NEWPOST} component={Newpost} />
+            <ProtectedRoute path={ROUTES.MESSAGES} user={user}   >
+              <Messages />
+            </ProtectedRoute>
+            <ProtectedRoute path={ROUTES.NEWPOST} user={user}   >
+              <Newpost />
+            </ProtectedRoute>
+            <ProtectedRoute path={ROUTES.TIMELINE} user={user}   >
+              <Timeline setShow={setShow} />
+            </ProtectedRoute>
+            {/* <Route path={ROUTES.NEWPOST} component={Newpost} /> */}
+            {/* <Route path={ROUTES.TIMELINE} component={Timeline} /> */}
+            <Redirect from={ROUTES.DASHBOARD} to={ROUTES.TIMELINE} />
             <Route component={NotFound} />
           </Switch>
-          {/* </Suspense> */}
         </div>
-        <div className="dashboard__rightbar">
+        {location.pathname !== '/messages' && <div className="dashboard__rightbar">
           <div className="dashboard__right--search">
             <SearchBar />
           </div>
-        </div>
+        </div>}
 
       </div>
-
-    </LoggedInUserContext.Provider>
+    </>
   );
 }
 

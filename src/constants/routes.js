@@ -5,3 +5,6 @@ export const PROFILE = '/user/:username';
 export const NOT_FOUND = '/not-found';
 export const MESSAGES = '/messages';
 export const NEWPOST = '/newpost';
+export const TIMELINE = '/home';
+export const CONVERSATION = '/messages/:groupid';
+export const GROUPINFO = '/messages/:groupid/info';

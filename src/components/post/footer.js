@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
 
 export default function Footer({ caption, username }) {
-  const [newCap, setNewCap] = useState("")
   // useEffect(() => {
   //   setNewCap(caption.replace('\n', '\r'))
   // }, [caption])

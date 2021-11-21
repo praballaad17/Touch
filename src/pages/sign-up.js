@@ -1,17 +1,14 @@
-import { useState, useEffect, useContext } from 'react';
-import { Link, useLocation, Redirect } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, Redirect } from 'react-router-dom';
 import * as ROUTES from '../constants/routes';
 import { registerUser } from '../services/authenticationServices';
-import UserContext from '../context/user';
 
-export default function SignUp() {
-  const location = useLocation()
+export default function SignUp({ user: loggedInUser }) {
 
   const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
-  const { user: loggedInUser } = useContext(UserContext);
 
   const [error, setError] = useState('');
   const isInvalid = password === '' || emailAddress === '';
@@ -20,7 +17,7 @@ export default function SignUp() {
     event.preventDefault();
     try {
       await registerUser(username, fullName, emailAddress, password);
-      window.location = location ? location.pathname : "/"
+      window.location = "/"
     } catch (error) {
       console.log(error.response);
       setFullName('');
@@ -42,7 +39,7 @@ export default function SignUp() {
 
   return (
     <div className="login">
-      
+
       <div className="login__box">
         <div className="login__box--sub">
           <h1 className="login__box--head">

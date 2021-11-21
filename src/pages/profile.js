@@ -1,60 +1,51 @@
 import { useParams, useHistory } from 'react-router-dom';
-import { useState, useEffect, useContext } from 'react';
-import { getusersFollowing, getusersFollowers, getUserByUsername, getuserDisplayImgs } from '../services/userServices'
-import * as ROUTES from '../constants/routes';
+import { useEffect } from 'react';
 import UserProfile from '../components/profile';
 import ReactLoader from '../components/loader';
-import LoggedInUserContext from '../context/logged-in-user';
+import { useUser } from '../context/userProvider';
+import { useUserPost } from '../context/userPostProvider';
 
-export default function Profile(props) {
+export default function Profile() {
   const { username } = useParams();
-  const { loggedInUser } = useContext(LoggedInUserContext)
 
   useEffect(() => {
     document.title = `${username} | Touch`;
-  }, []);
+  }, [username]);
 
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false)
-  const history = useHistory();
+  const { getUser, user: loggedInUser, profile, loading } = useUser()
+  const { getProfilePost, loading: profLoad, pageNumber, setPageNumber } = useUserPost()
 
   useEffect(() => {
-    setLoading(true)
-    async function getUserDetails(user) {
-      const followers = await getusersFollowers(username);
-      const following = await getusersFollowing(username);
-      const result = await getuserDisplayImgs(username)
-      setUser({ ...user, followers: followers, following: following, displayImg: result?.displayImg });
-      setLoading(false)
-    }
-
-    async function checkUserExists() {
+    if (loggedInUser?.username !== username) {
       try {
-        const result = await getUserByUsername(username);
-        if (loggedInUser && username === loggedInUser?.username) {
-          setUser(loggedInUser)
-          setLoading(false)
-        }
-        else {
-          getUserDetails(result);
-        }
+        getUser(username)
       } catch (error) {
-        history.push(ROUTES.NOT_FOUND)
+        console.log(error);
       }
     }
+  }, [username])
 
-    checkUserExists()
-
-  }, [username, history]);
+  useEffect(async () => {
+    try {
+      console.log("getting posts");
+      await getProfilePost(username, pageNumber)
+    } catch (error) {
+      console.log(error);
+    }
+  }, [username, pageNumber])
+  // console.log(loading, profLoad);
 
   return (
     <>
-      {loading ? (
+      {loading && profLoad ? (
         <ReactLoader />
       ) : (
         <div className="bg-gray-background">
           <div className="mx-auto max-w-screen-lg">
-            <UserProfile user={user} setUser={setUser} />
+            {loggedInUser?.username == username ?
+              <UserProfile user={loggedInUser} setPageNumber={setPageNumber} /> :
+              <UserProfile user={profile} setPageNumber={setPageNumber} />}
+            {/* {user && <UserProfile user={user} setUser={setUser} setPageNumber={setPageNumber} />} */}
           </div>
         </div>
       )

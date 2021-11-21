@@ -14,9 +14,9 @@ export default function usePhotos(user, pageNumber) {
 
       if (user?.following?.length > 0) {
         try {
-          const post = await getPost(user._id, pageNumber, 5);
-          setPosts(prevPost => { return [...prevPost, ...post.result] });
-          setMore(post.result.length > 0)
+          // const post = await getPost(user._id, pageNumber, 5);
+          // setPosts(prevPost => { return [...prevPost, ...post.result] });
+          // setMore(post.result.length > 0)
           setLoading(false)
         } catch (error) {
           setError(true)

@@ -18,10 +18,9 @@ export default function Leftbar({ loggedInUser, user }) {
             <div className="leftbar">
                 <ul className="link-list">
                     <li className="link-list-item">
-                        <Link className="u-center-text" to={`/user/${loggedInUser?.username}`} aria-label="Profile">
+                        <Link className="link u-flex-center" to={`/user/${loggedInUser?.username}`} aria-label="Profile">
                             <img className="link-list--proImg" src={
                                 loggedInUser?.displayImg?.profileImg.length ? loggedInUser?.displayImg?.profileImg : DEFAULT_IMAGE_PATH}
-
                                 alt={loggedInUser?.username} />
                             <span className="link--text">{loggedInUser?.username}</span>
                         </Link>

@@ -28,8 +28,8 @@ export default function ToggleBar({ show, onClose, loggedInUser }) {
                                     <div className="toggle-sidebar__name">{loggedInUser?.fullName}</div>
                                     <div className="toggle-sidebar__username">@{loggedInUser?.username}</div>
                                     <div className="toggle-sidebar__counts">
-                                        <div>{loggedInUser?.followers.length} followers</div>
-                                        <div>{loggedInUser?.following.length} following</div>
+                                        <div>{loggedInUser?.followers?.length} followers</div>
+                                        <div>{loggedInUser?.following?.length} following</div>
                                     </div>
                                 </Link>
                             </li>

@@ -1,19 +1,16 @@
-import { useReducer, useEffect, useContext, useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import Header from './header';
 import Skeleton from 'react-loading-skeleton';
 import Post from '../post';
 import { NEWPOST } from '../../constants/routes';
-import TimeLineContext from '../../context/timeline';
-import LoggedInUserContext from '../../context/logged-in-user';
-import useProfilePost from '../../hooks/useProfilePost';
 import ReactLoader from '../loader';
+import { useUserPost } from '../../context/userPostProvider';
+import { useUser } from '../../context/userProvider';
 
-export default function Profile({ user, setUser }) {
-  const [pageNumber, setPageNumber] = useState(1)
+export default function Profile({ user }) {
   const [followerCount, setfollowerCount] = useState()
-  const { logginUser } = useContext(LoggedInUserContext)
-  const { posts, loading, hasMore, error, setPosts } = useProfilePost(user, logginUser?._id, pageNumber);
-
+  const { profilePost, loading, setPageNumber, hasMore } = useUserPost()
+  const { user: loggedInUser } = useUser()
 
   const observer = useRef()
   const lastPostRef = useCallback(node => {
@@ -28,46 +25,49 @@ export default function Profile({ user, setUser }) {
   }, [loading, hasMore])
 
   useEffect(() => {
-    function getProfileInfoAndPhotos() {
-      setfollowerCount(user?.followers.length)
-    }
-    getProfileInfoAndPhotos();
-  }, [user, logginUser]);
+    setfollowerCount(user?.followers.length)
+  }, [user])
+
+
 
   return (
     <>
-      <TimeLineContext.Provider value={{ user, setUser, userPost: posts, setuserPost: setPosts }}>
-        {user && <Header
-          photosCount={posts ? posts.length : 0}
-          user={user}
-          setUser={setUser}
-          setfollowerCount={setfollowerCount}
-          followerCount={followerCount}
-        />}
-        {!posts.length && loading ? (
-          <Skeleton count={1} width={640} height={500} className="mb-5" />
-        ) : (
-          <>
-            {posts.length ?
-              (posts.map((content, index) => {
-                if (posts.length === index + 1) {
-                  return <Post postref={lastPostRef} key={content?._id} content={content} userProfileImg={user?.displayImg.profileImg} />
-                }
-                else {
-                  return <Post key={content?._id} content={content} userProfileImg={user?.displayImg.profileImg} />
-                }
-              })
-              ) : (
-                <div className="nopost">
+      {user && <Header
+        photosCount={profilePost ? profilePost.length : 0}
+        user={user}
+        setfollowerCount={setfollowerCount}
+        followerCount={followerCount}
+      />}
+      {!profilePost.length && loading ? (
+        <ReactLoader />
+      ) : (
+        <>
+          {profilePost.length ?
+            (profilePost.map((content, index) => {
+              if (profilePost.length === index + 1) {
+                return <Post postref={lastPostRef} key={content?._id} content={content} userProfileImg={user?.displayImg.profileImg} />
+              }
+              else {
+                return <Post key={content?._id} content={content} userProfileImg={user?.displayImg.profileImg} />
+              }
+            })
+            ) : (
+              loggedInUser?.username == user?.username ?
+                (<div className="nopost">
                   <div className="nopost-no heading-main">No Post</div>
                   <div className="nopost-to"><a href={NEWPOST}>Click Here</a> To Post</div>
-                </div>
-              )}
-            <div>{loading && (
+                </div>) :
+                (<div className="nopost">
+                  <div className="nopost-no heading-main">No Post</div>
+                  {/* <div className="nopost-to"><a href={NEWPOST}>Click Here</a> To Post</div> */}
+                </div>)
+
+            )}
+          <div>
+            {loading && (
               <ReactLoader />
             )}</div>
-          </>)}
-      </TimeLineContext.Provider>
+        </>)}
     </>
   );
 }
