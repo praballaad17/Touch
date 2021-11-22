@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ToggleBar from './toggleBar';
 import { DEFAULT_IMAGE_PATH } from '../constants/paths';
 
-export default function Leftbar({ loggedInUser, user }) {
+export default function Leftbar({ loggedInUser, user, onClose }) {
     const [show, setShow] = useState(false)
 
     return (
@@ -17,7 +17,7 @@ export default function Leftbar({ loggedInUser, user }) {
 
             <div className="leftbar">
                 <ul className="link-list">
-                    <li className="link-list-item">
+                    <li className="link-list-item" onClick={onClose}>
                         <Link className="link u-flex-center" to={`/user/${loggedInUser?.username}`} aria-label="Profile">
                             <img className="link-list--proImg" src={
                                 loggedInUser?.displayImg?.profileImg.length ? loggedInUser?.displayImg?.profileImg : DEFAULT_IMAGE_PATH}

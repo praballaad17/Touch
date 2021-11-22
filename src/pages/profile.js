@@ -40,13 +40,11 @@ export default function Profile() {
       {loading && profLoad ? (
         <ReactLoader />
       ) : (
-        <div className="bg-gray-background">
-          <div className="mx-auto max-w-screen-lg">
-            {loggedInUser?.username == username ?
-              <UserProfile user={loggedInUser} setPageNumber={setPageNumber} /> :
-              <UserProfile user={profile} setPageNumber={setPageNumber} />}
-            {/* {user && <UserProfile user={user} setUser={setUser} setPageNumber={setPageNumber} />} */}
-          </div>
+        <div className="profile">
+          {loggedInUser?.username == username ?
+            <UserProfile user={loggedInUser} setPageNumber={setPageNumber} /> :
+            <UserProfile user={profile} setPageNumber={setPageNumber} />}
+          {/* {user && <UserProfile user={user} setUser={setUser} setPageNumber={setPageNumber} />} */}
         </div>
       )
       }

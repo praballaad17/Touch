@@ -37,7 +37,7 @@ export default function Timeline({ setShow }) {
   }, [loading, hasMore])
 
   return (
-    <div className="container col-span-2">
+    <div className="timeline">
       <div className="timeline__head">
         <div className="timeline__head--profile" onClick={() => setShow(true)}>
           <img className="link-list--proImg--small" src={loggedInUser?.displayImg?.profileImg} onError={(e) => {
@@ -65,7 +65,7 @@ export default function Timeline({ setShow }) {
           }
         })
       )}
-      <div>{loading && (
+      <div className="timeline__loading">{loading && (
         <ReactLoader />
       )}</div>
       {/* <div>{error && 'Error'}</div> */}

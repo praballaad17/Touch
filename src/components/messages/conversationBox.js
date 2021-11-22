@@ -1,6 +1,6 @@
 import { faArrowLeft, faEllipsisH, faImage, faInfoCircle, faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { DEFAULT_IMAGE_PATH } from '../../constants/paths'
 import { useConversations } from '../../context/conversationProvider'
 import ReactLoader from '../loader'
@@ -9,17 +9,26 @@ export default function ConversationBox() {
     const { selectedConversation, sendMessage, setSelectedConversationGroupId } = useConversations()
     const [text, setText] = useState("")
 
+    const setRef = useCallback(node => {
+        if (node) {
+            node.scrollIntoView({ smooth: true })
+        }
+    }, [])
+
     const handleInput = (e) => {
         e.preventDefault()
         const message = e.target.value
         setText(message)
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
+    const handleSubmit = () => {
         setText("")
-
         sendMessage(selectedConversation.membersId, text, selectedConversation._id)
+    }
+    const handleKey = (e) => {
+        if (e.key === 'Enter') {
+            handleSubmit()
+        }
     }
 
     if (!selectedConversation) return (
@@ -50,8 +59,9 @@ export default function ConversationBox() {
             </div>
             <div className="convbox__box">
                 {selectedConversation.messages.map((message, index) => {
+                    const lastMessage = selectedConversation.messages.length - 1 === index
                     return (
-                        <div key={index} className={`convbox__box-message ${message.fromMe ? 'convbox__box-message-me' : 'convbox__box-message-other'}`} >
+                        <div key={index} ref={lastMessage ? setRef : null} className={`convbox__box-message ${message.fromMe ? 'convbox__box-message-me' : 'convbox__box-message-other'}`} >
                             <div className={`convbox__box-message-textbox ${message.fromMe ? 'convbox__box-message-textbox-me' : 'convbox__box-message-textbox-other'}`} >
                                 <div className="u-icon convbox__box-message-textbox-icon"><FontAwesomeIcon icon={faEllipsisH} /></div>
                                 <div className={`convbox__box-message-text ${message.fromMe ? 'convbox__box-message-text-me' : 'convbox__box-message-text-other'}`}>{message.text}</div>
@@ -67,7 +77,7 @@ export default function ConversationBox() {
                     <input type="file" style={{ opacity: 0, position: "absolute", left: "-99999px" }} />
                 </label>
                 {/* <textarea className="convbox__form-input" onInput={handleInput} placeholder="Start a New Message" /> */}
-                <input className="convbox__form-input" type="text" onInput={handleInput} value={text} placeholder="Start a New Message" />
+                <input className="convbox__form-input" type="text" onKeyUp={handleKey} onInput={handleInput} value={text} placeholder="Start a New Message" />
                 <div className="u-icon" onClick={handleSubmit}><FontAwesomeIcon icon={faPaperPlane} /></div>
             </div>
         </div>

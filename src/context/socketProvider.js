@@ -13,6 +13,7 @@ export function SocketProvider({ jwt, children }) {
     useEffect(() => {
         if (!jwt) return
         const newSocket = io(
+            // 'http://localhost:3003/',
             'https://touch-app-server.herokuapp.com/',
             { query: { jwt } }
         )

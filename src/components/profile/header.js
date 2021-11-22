@@ -68,7 +68,7 @@ export default function Header({
 
         <div className="profile__header-info">
           <div className="profile__header-info-head">
-            <p className="text-2xl mr-4">@{profileUsername}</p>
+            <p className="u-bold">@{profileUsername}</p>
             {activeBtnFollow && isFollowingProfile === null ? (
               <Skeleton count={1} width={60} height={32} />
             ) : (
@@ -93,16 +93,16 @@ export default function Header({
             ) : (
               <>
                 <p className="profile__header-info-follow-count">
-                  <span className="font-bold">{photosCount}</span> photos
+                  <span className="u-bold">{photosCount}</span> photos
                 </p>
                 <p className="profile__header-info-follow-count" onClick={() => setIsfollowerModal(true)}>
-                  <span className="font-bold">{followerCount}</span>
+                  <span className="u-bold">{followerCount}</span>
                   {` `}
                   {followerCount === 1 ? `follower` : `followers`}
                 </p>
                 <FollowerModal open={isfollowerModal} loggedInUser={loggedInUser} onClose={() => setIsfollowerModal(false)} />
                 <p className="profile__header-info-follow-count" onClick={() => setIsfollowingModal(true)}>
-                  <span className="font-bold">{following?.length}</span> following
+                  <span className="u-bold">{following?.length}</span> following
                 </p>
               </>
             )}

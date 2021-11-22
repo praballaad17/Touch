@@ -73,7 +73,7 @@ export default function PIModal({ open, onClose, displayImgs }) {
                             <input type="file" style={{ opacity: 0, position: "absolute", left: "-99999px" }} onChange={handleSubmit} />
                         </li>
                     </label>
-                    <li className="modal-box__item" onClick={removeImage} >Remove Image</li>
+                    <li className="modal-box__item u-text-red-bold" onClick={removeImage} >Remove Image</li>
                     <li className="modal-box__item" onClick={onClose}>Cancel</li>
                 </ul>
             </div>

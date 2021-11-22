@@ -54,7 +54,7 @@ export function ConversationsProvider({ id, children }) {
         })
     }, [socket, createConversation])
 
-    const addMessageToConversation = useCallback(({ members, text, sender, date, groupId }) => {
+    const addMessageToConversation = useCallback(({ membersId, text, sender, date, groupId }) => {
         setConversations(prevConversations => {
             let madeChange = false
             const newMessage = { sender, text, date }
@@ -75,7 +75,7 @@ export function ConversationsProvider({ id, children }) {
             } else {
                 return [
                     ...prevConversations,
-                    { _id: groupId, members, messages: [newMessage] }
+                    { _id: groupId, membersId, messages: [newMessage] }
                 ]
             }
         })
@@ -91,16 +91,15 @@ export function ConversationsProvider({ id, children }) {
 
 
 
-    function sendMessage(members, text, groupId) {
+    function sendMessage(membersId, text, groupId) {
         const date = new Date()
-        socket.emit('send-message', { members, text, groupId, date })
-
-        addMessageToConversation({ members, text, sender: id, date, groupId })
+        addMessageToConversation({ membersId, text, sender: id, date, groupId })
+        socket.emit('send-message', { membersId, text, groupId, date })
     }
 
 
     const formattedConversations = conversations.map((conversation, index) => {
-
+        console.log("formated");
         const messages = conversation.messages.map(message => {
             const members = conversation.members.find(contact => {
                 return contact?._id === message?.sender
@@ -117,10 +116,11 @@ export function ConversationsProvider({ id, children }) {
 
     useEffect(() => {
         formattedConversations.map(conversation => {
-            if (conversation._id === selectedConversationGroupId) setSelectedConversation(conversation)
+            console.log("in effect");
+            if (conversation._id === selectedConversationGroupId) setSelectedConversation(prev => conversation)
         })
-    }, [selectedConversationGroupId])
-
+    }, [selectedConversationGroupId, conversations])
+    console.log(conversations, formattedConversations, selectedConversation);
     const value = {
         conversations: formattedConversations,
         selectedConversation,

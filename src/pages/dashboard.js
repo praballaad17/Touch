@@ -65,7 +65,7 @@ export default function Dashboard({ user }) {
           </div>
         </div>
         <div className="dashboard__leftbar">
-          <Leftbar loggedInUser={loggedInUser} user={user} />
+          <Leftbar loggedInUser={loggedInUser} user={user} onClose={() => setShow(false)} />
         </div>
         <div className="dashboard__main">
           <Switch>
