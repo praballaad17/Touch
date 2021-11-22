@@ -1036,6 +1036,7 @@ body {
         display: inline;
         position: absolute;
         bottom: 0;
+        left: 0;
         z-index: 100; } }
   .dashboard__main {
     flex-grow: 1;
@@ -1072,6 +1073,7 @@ body {
   align-items: center;
   position: absolute;
   bottom: 0;
+  left: 0;
   width: 100vw;
   height: 8vh;
   padding: 0 2rem; }
