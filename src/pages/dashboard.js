@@ -10,8 +10,11 @@ import NotFound from './not-found';
 import { useConversations } from '../context/conversationProvider';
 import { useUser } from '../context/userProvider';
 import ProtectedRoute from '../helpers/protected-route';
+import FullImg from '../components/post/fullImg';
+import { useNotifications } from '../context/notificationProvider';
 // import MainLoader from '../loader/mainLoader';
 
+const Notification = lazy(() => import('../components/notification/notification'));
 const Profile = lazy(() => import('./profile'));
 const Timeline = lazy(() => import('../components/timeline'));
 const Messages = lazy(() => import('../components/messages/messages'));
@@ -23,7 +26,8 @@ export default function Dashboard({ user }) {
   }, []);
   const [show, setShow] = useState(false)
   const { user: loggedInUser } = useUser();
-  const { selectedConversationGroupId } = useConversations()
+  const { selectedConversationGroupId, unseen } = useConversations()
+  const { unreadCount } = useNotifications()
 
   let location = useLocation();
   function Phonebar() {
@@ -34,9 +38,11 @@ export default function Dashboard({ user }) {
             <span className="phonebar__link--icon">
               <FontAwesomeIcon icon={faHome} /></span>
           </Link>
-          <Link className="phonebar__link" to={ROUTES.DASHBOARD} aria-label="Dashboard">
+          <Link className="phonebar__link" to={ROUTES.NOTIFIACATION} aria-label="Dashboard">
             <span className="phonebar__link--icon">
-              <FontAwesomeIcon icon={faBell} /></span>
+              <FontAwesomeIcon icon={faBell} />
+              <div className="link--icon-top">{unreadCount ? unreadCount : ""}</div>
+            </span>
           </Link>
           <Link className="phonebar__link" to={ROUTES.NEWPOST} aria-label="Dashboard">
             <span className="phonebar__link--icon">
@@ -44,7 +50,9 @@ export default function Dashboard({ user }) {
           </Link>
           <Link className="phonebar__link" to={ROUTES.MESSAGES} aria-label="Dashboard">
             <span className="phonebar__link--icon">
-              <FontAwesomeIcon icon={faMailBulk} /></span>
+              <FontAwesomeIcon icon={faMailBulk} />
+              <div className="link--icon-top">{unseen ? unseen : ""}</div>
+            </span>
           </Link>
 
         </div>
@@ -73,12 +81,18 @@ export default function Dashboard({ user }) {
             <ProtectedRoute path={ROUTES.MESSAGES} user={user}   >
               <Messages />
             </ProtectedRoute>
+            <ProtectedRoute path={ROUTES.NOTIFIACATION} user={user}   >
+              <Notification />
+            </ProtectedRoute>
             <ProtectedRoute path={ROUTES.NEWPOST} user={user}   >
               <Newpost />
             </ProtectedRoute>
-            <ProtectedRoute path={ROUTES.TIMELINE} user={user}   >
+            <ProtectedRoute path={ROUTES.DASHBOARD} user={user}   >
               <Timeline setShow={setShow} />
             </ProtectedRoute>
+            {/* <ProtectedRoute path={ROUTES.FULLIMG} user={user}  >
+              <FullImg user={user} />
+            </ProtectedRoute> */}
             {/* <Route path={ROUTES.NEWPOST} component={Newpost} /> */}
             {/* <Route path={ROUTES.TIMELINE} component={Timeline} /> */}
             <Redirect from={ROUTES.DASHBOARD} to={ROUTES.TIMELINE} />

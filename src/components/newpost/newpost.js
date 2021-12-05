@@ -20,7 +20,7 @@ export default function Newpost() {
     }, []);
 
     const { user: loggedInUser } = useUser()
-    const { setTimeline } = usePost()
+    const { setTimeline, postFeed } = usePost()
     const { addToAllProfilePost } = useUserPost()
     const [filePreviw, setFilePreviw] = useState([])
     const [uploading, setUploading] = useState(false)
@@ -40,6 +40,7 @@ export default function Newpost() {
 
     const handleFileUpload = async (e) => {
         if (!e.target.files.length) return;
+        if (subfiles.length === 4) return;
         const file = e.target.files[0]
         const resizeImage = await resizeFile(file);
         setFilePreviw(prevFile => [...prevFile, URL.createObjectURL(resizeImage)])
@@ -73,26 +74,54 @@ export default function Newpost() {
         setUploading(true)
         setpgModal(true)
         for (let i = 0; i < subfiles.length; i++) {
+            console.log("in loop");
             const fileurl = await uploadFileToStorage(subfiles[i], `/file/${loggedInUser?.username}/${postId}/${subfilesName[i]}`)
             files.push(fileurl)
         }
 
         try {
-            const { data } = await postByUsername(files, subfilesName, postId, caption, loggedInUser.username, progressFn)
+            postFeed(files, subfilesName, postId, caption)
             // const res = await postByUsername(formData, loggedInUser.username)
-            console.log(data);
-            setTimeline(prevPost => [data, ...prevPost])
-            addToAllProfilePost(loggedInUser?.username, data)
+            // console.log(data);
+            // setTimeline(prevPost => [data, ...prevPost])
+            // addToAllProfilePost(loggedInUser?.username, data)
             setUploading(false)
-            history.push({
-                pathname: TIMELINE,
-                data
-            })
+            setpgModal(false)
+            // history.push({
+            //     pathname: TIMELINE,
+            //     data
+            // })
         } catch (error) {
             console.log(error.response);
         }
     }
+    console.log(filePreviw);
+    useEffect(() => {
+        if (filePreviw.length > 0) {
+            document.getElementById('post_submit').classList.remove("btn--grey")
+            document.getElementById('post_submit').classList.add("btn--tertiary")
 
+        }
+        else if (filePreviw.length === 0) {
+            console.log("zero");
+            document.getElementById('post_submit').classList.remove("btn--tertiary")
+            document.getElementById('post_submit').classList.add("btn--grey")
+        }
+
+
+    }, [filePreviw])
+
+    useEffect(() => {
+        if (filePreviw.length === 4) {
+            console.log("diabled");
+            document.getElementById('addpost').classList.add('newpost__media-disabled');
+            document.getElementById('addpost-input').disabled = true;
+        }
+        if (filePreviw.length !== 4) {
+            document.getElementById('addpost').classList.remove('newpost__media-disabled');
+            document.getElementById('addpost-input').disabled = false;
+        }
+    }, [filePreviw])
 
     return (
         <>
@@ -100,17 +129,17 @@ export default function Newpost() {
             <div className="newpost__head">
                 <h3 className="heading-tertiary">New Post</h3>
                 <div>
-                    <button className="btn btn--grey" onClick={handleSubmit}>Post</button>
+                    <button id="post_submit" className="btn btn--grey" onClick={handleSubmit}>Post</button>
                 </div>
             </div>
             <div className="newpost__main">
                 <div>
                     <UploadPreview files={filePreviw} onChange={handleFileCross} />
                 </div>
-                <textarea className="newpost__input-text" placeholder="compose new post..." onChange={handleCaption} />
-                <label className="newpost__media">
+                <textarea className="newpost__input-text" placeholder="compose new post..." onInput={handleCaption} />
+                <label id="addpost" className="newpost__media">
                     <FontAwesomeIcon icon={faImage} />
-                    <input type="file" style={{ opacity: 0, position: "absolute", left: "-99999px" }} onChange={handleFileUpload} />
+                    <input id="addpost-input" type="file" style={{ opacity: 0, position: "absolute", left: "-99999px" }} onChange={handleFileUpload} />
                 </label>
             </div>
 

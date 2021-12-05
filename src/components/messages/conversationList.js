@@ -13,7 +13,7 @@ export default function ConversationList() {
     const result = []
 
     const { conversations, setSelectedConversationGroupId, loading } = useConversations()
-
+    // console.log(conversations[0].messages[conversations[0].messages.length - 1]);
     const handleSearch = () => {
         setOnsearch(true)
 
@@ -76,10 +76,16 @@ export default function ConversationList() {
 
                 {!onsearch && <div className="convlist__list">
                     {conversations.map(conversation => (
-                        <div className="convlist__list-conv" onClick={() => setSelectedConversationGroupId(conversation._id)}>
-                            <img className="convlist__list-conv-img" src={DEFAULT_IMAGE_PATH} alt="profile-img" />
-                            {conversation.members.map(user => <div>&nbsp;{user.fullName},</div>)}
-                        </div>
+                        <>
+                            {/* {console.log(conversation.messages[conversation.messages.length - 1])} */}
+                            <div className="convlist__list-conv" onClick={() => setSelectedConversationGroupId(conversation._id)}>
+                                <img className="convlist__list-conv-img" src={DEFAULT_IMAGE_PATH} alt="profile-img" />
+                                <div className="convlist__list-conv__cont">
+                                    <div className="convlist__list-conv__mem">{conversation.members.map(user => <div>&nbsp;{user.fullName},</div>)}</div>
+                                    <div>{conversation.messages[conversation.messages.length - 1]?.text}</div>
+                                </div>
+                            </div>
+                        </>
                     ))}
                 </div>}
                 <div className="convlist__newconv" onClick={() => setModal(true)}> <FontAwesomeIcon icon={faEnvelopeOpen} /></div>

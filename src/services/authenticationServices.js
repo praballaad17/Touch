@@ -55,6 +55,7 @@ export const registerUser = async (username, fullName, email, password) => {
       username,
       password,
     });
+    console.log(response.data.token);
     localStorage.setItem(tokenKey, response.data.token)
     return response.data;
   } catch (err) {

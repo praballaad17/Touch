@@ -6,14 +6,16 @@ import ConversationBox from './conversationBox'
 import ConversationList from './conversationList'
 
 export default function Messages() {
+    const { setUnseen } = useConversations()
     useEffect(() => {
         document.title = 'Messages | Touch';
+        setUnseen(0)
     }, []);
     const { retriveGroups, selectedConversationGroupId } = useConversations()
     useEffect(async () => {
         await retriveGroups()
     }, [])
-    console.log(selectedConversationGroupId);
+    // console.log(selectedConversationGroupId);
 
     return (
         <>

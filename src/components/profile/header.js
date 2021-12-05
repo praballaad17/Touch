@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
 import { useState, useEffect, useContext } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { toggleFollow } from '../../services/userServices';
 import { DEFAULT_IMAGE_PATH } from '../../constants/paths';
 import PIModal from './pimodal'
 import FollowerModal from './followerModal';
@@ -13,23 +12,23 @@ export default function Header({
   setfollowerCount,
   user
 }) {
-  const { user: loggedInUser } = useUser();
+  const { user: loggedInUser, toggleFollow } = useUser();
   const [isFollowingProfile, setIsFollowingProfile] = useState(null);
   const [ispiModal, setIspiModal] = useState(false)
   const [isfollowerModal, setIsfollowerModal] = useState(false)
   const [isfollowingModal, setIsfollowingModal] = useState(false)
   const { _id: profileUserId, fullName, followers, following, username: profileUsername, displayImg } = user
   const activeBtnFollow = loggedInUser?.username && loggedInUser?.username !== profileUsername;
-  // console.log(displayImg);
+
   const handleToggleFollow = async () => {
     setIsFollowingProfile((isFollowingProfile) => !isFollowingProfile);
     setfollowerCount(isFollowingProfile ? followerCount - 1 : followerCount + 1);
-    await toggleFollow(isFollowingProfile, profileUserId, loggedInUser.id);
+    toggleFollow(isFollowingProfile, profileUserId, loggedInUser._id);
   };
 
   useEffect(() => {
     const isLoggedInUserFollowingProfile = () => {
-      const isFollowing = followers.filter(item => item._id == loggedInUser.id)
+      const isFollowing = followers.filter(item => item._id == loggedInUser._id)
       setIsFollowingProfile(!!isFollowing.length);
     };
 

@@ -7,14 +7,15 @@ export function useSocket() {
     return useContext(SocketContext)
 }
 
-export function SocketProvider({ jwt, children }) {
+export function SocketProvider({ jwt, user, children }) {
     const [socket, setSocket] = useState()
 
     useEffect(() => {
-        if (!jwt) return
+
+        if (!jwt && !user) return
         const newSocket = io(
-            // 'http://localhost:3003/',
-            'https://touch-app-server.herokuapp.com/',
+            'http://localhost:3003/',
+            // 'https://touch-app-server.herokuapp.com/',
             { query: { jwt } }
         )
         setSocket(newSocket)

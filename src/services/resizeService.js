@@ -1,6 +1,8 @@
 import Resizer from "react-image-file-resizer";
 import { storage } from '../firebase';
+import axios from 'axios';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { apiUrl } from "../config.json";
 
 export const imageResize = async (file) => {
     const resizeFile = (file) =>
@@ -41,4 +43,13 @@ export const deleteImgInStorage = (reffile) => {
         // Uh-oh, an error occurred!
         console.log("unsuccess", error);
     });
+}
+
+export const getMentionNoti = async (username) => {
+    try {
+        const { data } = await axios.get(`${apiUrl}/get-mention-notification/${username}`);
+        return data;
+    } catch (err) {
+        console.log(err);
+    }
 }

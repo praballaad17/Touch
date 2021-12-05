@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect, createContext, useCallback, useReducer } from 'react'
+import { getPostById } from '../services/postServices';
 import { useSocket } from './socketProvider';
 
 const PostContext = createContext();
@@ -9,12 +10,15 @@ export function PostProvider({ children }) {
     const socket = useSocket()
     const ACTION = {
         ADD_POST: 'add-post',
-        SET_LOAD: 'set-load'
+        SET_LOAD: 'set-load',
+        ADD_RECIVED_POST: 'add-received-post',
+        ADD_POST_AT_START: 'add-post-at-start'
     }
     function reducer(state, action) {
         switch (action.type) {
             case ACTION.ADD_POST:
                 return {
+                    ...state,
                     loading: false, hasMore: action.payload.hasMore,
                     savedTimeline: [...state.savedTimeline, action.payload.savedTimeline]
                 }
@@ -22,18 +26,33 @@ export function PostProvider({ children }) {
                 return {
                     ...state, loading: action.payload.loading
                 }
+            case ACTION.ADD_RECIVED_POST:
+                return {
+                    ...state,
+                    recievedPosts: [action.payload.recievedPosts, ...state.recievedPosts]
+                }
+            case ACTION.ADD_POST_AT_START:
+
+                return {
+                    ...state,
+                    savedTimeline: [{ ...state.savedTimeline[0], result: [...state.recievedPosts, ...state.savedTimeline[0].result] },
+                    ...state.savedTimeline],
+                    recievedPosts: []
+                }
             default:
                 return state;
         }
     }
     const initialState = {
+        // savedTimeline: [{pageNumber: 0, hasMore: true, result: []},],
         savedTimeline: [],
+        recievedPosts: [],
         loading: false,
         hasMore: false
     }
     const [timeline, setTimeline] = useState([])
     const [pageNumber, setPageNumber] = useState(1)
-    const [{ savedTimeline, loading, hasMore }, dispatch] = useReducer(
+    const [{ savedTimeline, recievedPosts, loading, hasMore }, dispatch] = useReducer(
         reducer, initialState
     )
 
@@ -43,10 +62,12 @@ export function PostProvider({ children }) {
     }, [dispatch])
 
     const getTimeline = () => {
+        console.log("in timeline", socket);
         if (socket == null) return
+
         dispatch({ type: ACTION.SET_LOAD, payload: { loading: true } })
         let i = 0, limit = 10
-
+        console.log(savedTimeline, pageNumber);
         while (i < savedTimeline.length && savedTimeline[i].pageNumber !== pageNumber) {
             ++i
         }
@@ -55,6 +76,7 @@ export function PostProvider({ children }) {
         }
         else {
             try {
+                console.log("get timline");
                 socket.emit('get-timeline', { pageNumber, limit })
             } catch (error) {
                 console.log(error);
@@ -70,11 +92,62 @@ export function PostProvider({ children }) {
 
     useEffect(() => {
         if (savedTimeline.length) {
-            setTimeline(prev => [...prev, ...savedTimeline[pageNumber - 1]?.result])
+            savedTimeline.map(item => {
+                setTimeline(prev => [...prev, ...item.result])
+
+            })
         }
     }, [savedTimeline])
 
+    const postFeed = (files, fileNames, postId, caption) => {
+        if (socket == null) return
+        dispatch({ type: ACTION.SET_LOAD, payload: { loading: true } })
+        try {
+            socket.emit('post-feed', { files, fileNames, postId, caption })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        if (socket == null) return
+        socket.on('receive-post', (post) => {
+            console.log("recived post");
+            console.log(post);
+            dispatch({ type: ACTION.ADD_RECIVED_POST, payload: { recievedPosts: post } })
+        })
+    }, [socket])
+
+    const addRecivedToTimeline = useCallback(() => {
+        setTimeline(prev => [...recievedPosts, ...prev])
+        dispatch({ type: ACTION.ADD_RECIVED_POST, payload: { recievedPosts: [] } })
+    })
+
+    const getPostFromTimeline = async (postId) => {
+        let i = 0
+        console.log(postId);
+        while (i < timeline.length && timeline[i]._id !== postId) {
+            ++i
+
+        }
+        if (i < timeline.length) {
+            console.log(timeline[i]);
+            return timeline[i]
+        }
+        else {
+            try {
+                const post = await getPostById(postId)
+                console.log(post);
+                return post
+            } catch (error) {
+                console.log(error)
+                return;
+            }
+        }
+    }
+    console.log(timeline);
     const value = {
+        getPostFromTimeline,
         timeline,
         setTimeline,
         getTimeline,
@@ -82,6 +155,9 @@ export function PostProvider({ children }) {
         setPageNumber,
         hasMore,
         loading,
+        postFeed,
+        recievedPosts,
+        addRecivedToTimeline
     }
 
     return (

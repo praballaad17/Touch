@@ -8,6 +8,7 @@ export function useConversations() {
 }
 
 export function ConversationsProvider({ id, children }) {
+    const [unseen, setUnseen] = useState(0)
     const [conversations, setConversations] = useState([])
     const [selectedConversation, setSelectedConversation] = useState()
     const [loading, setLoading] = useState(false)
@@ -43,9 +44,17 @@ export function ConversationsProvider({ id, children }) {
     useEffect(() => {
         if (socket == null) return
         socket.on('receive-new-group', (group) => {
+            id = group._id
+            setUnseen({
+                ...unseen,
+                allUnseen: unseen.allUnseen + 1,
+                [id]: 1
+            })
             createConversation(group)
         })
     }, [socket, createConversation])
+
+
 
     useEffect(() => {
         if (socket == null) return
@@ -55,6 +64,7 @@ export function ConversationsProvider({ id, children }) {
     }, [socket, createConversation])
 
     const addMessageToConversation = useCallback(({ membersId, text, sender, date, groupId }) => {
+
         setConversations(prevConversations => {
             let madeChange = false
             const newMessage = { sender, text, date }
@@ -84,7 +94,10 @@ export function ConversationsProvider({ id, children }) {
     useEffect(() => {
         if (socket == null) return
 
-        socket.on('receive-message', addMessageToConversation)
+        socket.on('receive-message', (group) => {
+            setUnseen(prev => prev + 1)
+            addMessageToConversation(group)
+        })
 
         return () => socket.off('receive-message')
     }, [socket, addMessageToConversation])
@@ -99,7 +112,7 @@ export function ConversationsProvider({ id, children }) {
 
 
     const formattedConversations = conversations.map((conversation, index) => {
-        console.log("formated");
+        // console.log("formated");
         const messages = conversation.messages.map(message => {
             const members = conversation.members.find(contact => {
                 return contact?._id === message?.sender
@@ -116,11 +129,11 @@ export function ConversationsProvider({ id, children }) {
 
     useEffect(() => {
         formattedConversations.map(conversation => {
-            console.log("in effect");
+            // console.log("in effect");
             if (conversation._id === selectedConversationGroupId) setSelectedConversation(prev => conversation)
         })
     }, [selectedConversationGroupId, conversations])
-    console.log(conversations, formattedConversations, selectedConversation);
+    console.log(unseen);
     const value = {
         conversations: formattedConversations,
         selectedConversation,
@@ -130,7 +143,9 @@ export function ConversationsProvider({ id, children }) {
         selectedConversationGroupId,
         retriveGroups,
         createGroup,
-        loading
+        loading,
+        unseen,
+        setUnseen
     }
 
     return (

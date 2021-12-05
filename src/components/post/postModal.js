@@ -35,7 +35,7 @@ export default function PostModal({ open, content, onClose }) {
             }
             await deletePostById(content._id)
 
-            if (pathname == "/") {
+            if (pathname == "/home") {
                 setTimeline(timeline.filter(item => item._id != content._id))
                 onClose()
             }
