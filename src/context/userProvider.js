@@ -121,7 +121,7 @@ export function UserProvider({ user, children }) {
         usersProfileImgs,
         toggleFollow,
         users,
-        userId: user.id
+        userId: user?.id
     }
 
     return (
