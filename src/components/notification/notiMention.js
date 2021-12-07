@@ -8,12 +8,12 @@ export default function NotiMention() {
 
     return (
         <div>
-            {
+            {mention.length ?
                 mention.map(item => (
                     <>
                         <MenNoti noti={item} />
                     </>
-                ))}
+                )) : <></>}
         </div>
     )
 }

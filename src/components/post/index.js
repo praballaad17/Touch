@@ -1,43 +1,33 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from './header';
 import Image from './image';
 import { Link } from 'react-router-dom';
-import Footer from './footer';
 import { useUser } from '../../context/userProvider';
+import PostFooter from './footer';
+import PostComments from './comments';
 
 
 export default function Post({ content, postref, setProfile, photosCollection }) {
-  const commentInput = useRef(null);
+  const [showC, setShowC] = useState(false)
   const [profileImg, setProfileImg] = useState()
   const [user, setuser] = useState()
-  const { getProfileImg, getUser } = useUser()
-  const { caption, author, fileNumber, _id, files } = content
+  const { getUser, users } = useUser()
+  const { caption, author, fileNumber, _id, files, comments, likes } = content
 
   useEffect(() => {
-    async function effectgetUser() {
-      const ruser = await getUser(author)
-      setuser(ruser)
-    }
-    effectgetUser()
+    getUser(author)
   }, [author])
 
   useEffect(() => {
-    async function getimg() {
-      const result = await getProfileImg(author)
-      setProfileImg(result?.displayImg.profileImg)
-    }
-    getimg()
+    users.map(item => {
+      if (item.username === author) {
+        setuser(item)
+        setProfileImg(item.displayImg.profileImg)
+      }
+    })
+  }, [users, author])
 
-  }, [content])
 
-  // const handlePay = () => {
-  //   setPayModel(true)
-  // }
-
-  // const result = caption.charCodeAt(0)
-  // console.log(caption, result);
-  // components
-  // -> header, image, actions (like & comment icons), footer, 
   return (
     <div ref={postref} className="post">
       <Link to={`/user/${user?.username}`} className="post__side" >
@@ -49,6 +39,8 @@ export default function Post({ content, postref, setProfile, photosCollection })
           {caption}
         </div>
         <Image files={files} author={author} fileNumber={fileNumber} postId={_id} />
+        <PostFooter setShowC={setShowC} postId={_id} likes={likes}  />
+        {showC ? <PostComments comments={comments} postId={_id} /> : <></>}
       </div>
     </div>
   );

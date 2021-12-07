@@ -14,7 +14,7 @@ export function UserProvider({ user, children }) {
     const [activeUser, setActiveUser] = useState()
     const [profile, setProfile] = useState()
     const [loading, setLoading] = useState(false)
-    const queue = [], userQueue = []
+    const queue = [], userQ = []
 
     const updateUser = useCallback((ruser) => {
         setActiveUser(ruser);
@@ -28,11 +28,6 @@ export function UserProvider({ user, children }) {
 
     }, [socket, updateUser])
 
-    // const checkAuth = (user) => {
-
-    // }
-
-
     async function getUser(username) {
         setLoading(true)
         let i = 0
@@ -40,17 +35,22 @@ export function UserProvider({ user, children }) {
             ++i
         }
         if (i < users.length) {
-
             setLoading(false)
             return users[i]
         }
         else {
-            try {
-                const user = await getUserByUsername(username)
-                setUsers(prev => [...prev, user])
-                return user
-            } catch (error) {
-                console.log(error);
+            if (userQ.includes(username)) return
+            else {
+                console.log("getting users");
+                userQ.push(username)
+                try {
+                    const user = await getUserByUsername(username)
+                    setUsers(prev => [...prev, user])
+                    setLoading(false)
+                    return user
+                } catch (error) {
+                    console.log(error);
+                }
             }
         }
     }
@@ -86,26 +86,29 @@ export function UserProvider({ user, children }) {
     const getProfileImg = async (username) => {
         let i = 0
 
-        while (i < usersProfileImgs.length && usersProfileImgs[i].user.username !== username) {
+        while (i < usersProfileImgs.length && usersProfileImgs[i].user.username !== username ) {
             ++i
         }
         if (i < usersProfileImgs.length) {
             return usersProfileImgs[i]
         } else {
+            console.log(queue);
+            if (queue.includes(username)) return
+            else {
+                queue.push(username)
+                try {
+                    const profileImg = await getuserDisplayImgs(username)
+                    setUsersProfileImgs(prev => [...prev, profileImg])
+                    return profileImg
 
-            try {
-                const profileImg = await getuserDisplayImgs(username)
-                setUsersProfileImgs(prev => [...prev, profileImg])
-                return profileImg
-
-            } catch (error) {
-                console.log(error);
-                return
+                } catch (error) {
+                    console.log(error);
+                    return
+                }
             }
         }
     }
 
-    console.log(activeUser);
 
     const value = {
         user: activeUser,
@@ -116,7 +119,9 @@ export function UserProvider({ user, children }) {
         loading,
         getProfileImg,
         usersProfileImgs,
-        toggleFollow
+        toggleFollow,
+        users,
+        userId: user.id
     }
 
     return (

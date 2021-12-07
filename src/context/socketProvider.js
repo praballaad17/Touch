@@ -14,7 +14,7 @@ export function SocketProvider({ jwt, user, children }) {
 
         if (!jwt && !user) return
         const newSocket = io(
-            //'http://localhost:3003/',
+            // 'http://localhost:3003/',
              'https://touch-app-server.herokuapp.com/',
             { query: { jwt } }
         )

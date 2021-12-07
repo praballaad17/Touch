@@ -5,14 +5,15 @@ import { deletePostById } from '../../services/postServices'
 import { deleteImgInStorage } from '../../services/resizeService'
 import { usePost } from '../../context/postProvider'
 import { useUser } from '../../context/userProvider'
+import { useUserPost } from '../../context/userPostProvider'
 
-export default function PostModal({ open, content, onClose }) {
+export default function PostModal({ open, content, onClose, isComment, postId }) {
     const { user: loggedInUser } = useUser()
-    // const { posts, setPosts, userPost, setuserPost } = useContext(TimeLineContext)
-    const { timeline, setTimeline } = usePost()
+    const { timeline, setTimeline, deleteComment } = usePost()
+    const { profilePost, removeFromAllProfilePost } = useUserPost()
     const { pathname } = useLocation()
     if (!open) return null
-
+    console.log(content , postId);
     const unfollow = async () => {
         // try {
         //     await toggleFollow(true, content.author, user._id)
@@ -30,18 +31,22 @@ export default function PostModal({ open, content, onClose }) {
     const deletePost = async () => {
 
         try {
-            for (let i = 0; i < content.fileNumber; i++) {
-                deleteImgInStorage(`/file/${content?.author}/${content._id}/${content?.fileNames[i]}`)
+            if (content.files.length) {
+                for (let i = 0; i < content.fileNumber; i++) {
+                    deleteImgInStorage(`/file/${content?.author}/${content._id}/${content?.fileNames[i]}`)
+                }
             }
-            await deletePostById(content._id)
 
-            if (pathname == "/home") {
-                setTimeline(timeline.filter(item => item._id != content._id))
-                onClose()
-            }
-            else {
-                // setuserPost(userPost.filter(item => item._id != content._id))
-            }
+            // if (pathname == "/home" || pathname == '/') {
+            setTimeline(timeline.filter(item => item._id != content._id))
+            onClose()
+            // }
+            // else {
+            removeFromAllProfilePost(loggedInUser?.username, content._id)
+            // setProfilePost(profilePost.filter(item => item._id != content._id))
+            // setuserPost(userPost.filter(item => item._id != content._id))
+            // }
+            await deletePostById(content._id)
         }
         catch (e) {
             alert("Error while deleting the Post, generally check your internet");
@@ -57,6 +62,11 @@ export default function PostModal({ open, content, onClose }) {
         }
     }
 
+    const handleDeleteComment = async () => {
+        await deleteComment(postId, content._id)
+        onClose()
+    }
+    console.log(isComment);
     return ReactDom.createPortal(
         <>
             <div className="modal-layout" onClick={onClose}></div>
@@ -64,8 +74,9 @@ export default function PostModal({ open, content, onClose }) {
                 <ul className="modal-box__list">
                     <li className="modal-box__item"><Link className="u-text-decor-none" target="_blanck" to={`/user/${content?.author}`} >Share</Link></li>
                     {/* {content.author != user.username && <li className="modal-box__item u-text-red-bold" onClick={unfollow} >Unfollow</li>} */}
-                    {content.author == loggedInUser.username && < li className="modal-box__item u-text-red-bold" onClick={deletePost} >Delete Post</li>}
-                    {content.author != loggedInUser.username && <li className="modal-box__item u-text-red-bold" onClick={notLikedPost} >I don't link this Post</li>}
+                    {content.author == loggedInUser.username && !isComment && < li className="modal-box__item u-text-red-bold" onClick={deletePost} >Delete Post</li>}
+                    {isComment && < li className="modal-box__item u-text-red-bold" onClick={handleDeleteComment} >Delete Comment</li>}
+                    {content.author != loggedInUser.username && !isComment &&  <li className="modal-box__item u-text-red-bold" onClick={notLikedPost} >I don't link this Post</li>}
                     <li className="modal-box__item" onClick={onClose}>Cancel</li>
                 </ul>
             </div>

@@ -30,8 +30,7 @@ export default function Newpost() {
     const [progress, setProgress] = useState("")
     const [pgModal, setpgModal] = useState(false)
     const [postId, setPostId] = useState()
-    let history = useHistory()
-
+    const history = useHistory()
 
     const resizeFile = (file) =>
         new Promise((resolve) => {
@@ -74,42 +73,42 @@ export default function Newpost() {
         setUploading(true)
         setpgModal(true)
         for (let i = 0; i < subfiles.length; i++) {
-            console.log("in loop");
             const fileurl = await uploadFileToStorage(subfiles[i], `/file/${loggedInUser?.username}/${postId}/${subfilesName[i]}`)
             files.push(fileurl)
         }
 
         try {
             postFeed(files, subfilesName, postId, caption)
-            // const res = await postByUsername(formData, loggedInUser.username)
-            // console.log(data);
-            // setTimeline(prevPost => [data, ...prevPost])
-            // addToAllProfilePost(loggedInUser?.username, data)
+            const data = {
+                files, fileNames: subfilesName, _id: postId,
+                caption, fileNumber: files.length, author: loggedInUser.username,
+                comments: [],
+            }
+            setTimeline(prevPost => [data, ...prevPost])
+            addToAllProfilePost(loggedInUser?.username, data)
             setUploading(false)
             setpgModal(false)
-            // history.push({
-            //     pathname: TIMELINE,
-            //     data
-            // })
+            history.push(TIMELINE)
         } catch (error) {
             console.log(error.response);
         }
     }
-    console.log(filePreviw);
+
     useEffect(() => {
-        if (filePreviw.length > 0) {
+
+        if (filePreviw.length > 0 || caption.length !== 0) {
             document.getElementById('post_submit').classList.remove("btn--grey")
             document.getElementById('post_submit').classList.add("btn--tertiary")
 
         }
-        else if (filePreviw.length === 0) {
+        else if (filePreviw.length === 0 || caption.length === 0) {
             console.log("zero");
             document.getElementById('post_submit').classList.remove("btn--tertiary")
             document.getElementById('post_submit').classList.add("btn--grey")
         }
 
 
-    }, [filePreviw])
+    }, [filePreviw , caption])
 
     useEffect(() => {
         if (filePreviw.length === 4) {

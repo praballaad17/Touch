@@ -23,8 +23,7 @@ export default function Timeline({ setShow, user }) {
   // const [show, setShow] = useState(false) 
 
   useEffect(async () => {
-    console.log("in effect");
-    await getTimeline()
+    await getTimeline(user?.id)
   }, [pageNumber])
 
   const observer = useRef()
@@ -74,10 +73,10 @@ export default function Timeline({ setShow, user }) {
         ) : (
           timeline?.map((content, index) => {
             if (timeline?.length === index + 1) {
-              return <Post key={index} postref={lastPostRef} key={content?._id} content={content} />
+              return <Post key={index} postref={lastPostRef} key={content?._id} content={content} user={user} />
             }
             else {
-              return <Post key={index} content={content} />
+              return <Post key={index} content={content} user={user} />
             }
           })
         )}

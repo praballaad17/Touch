@@ -46,11 +46,12 @@ export const retrivePostByUsername = async (username) => {
 };
 
 
-export const getUserPhotosByUsername = async (username, logginUserId, pageNumber, limit) => {
+export const getUserPhotosByUsername = async (username, pageNumber, limit) => {
+    console.log(":in post services");
     try {
         const response = await axios.get(`${apiEndpoint}/user-posts/${username}`,
             {
-                params: { page: pageNumber, limit: limit, logginUserId: logginUserId }
+                params: { page: pageNumber, limit: limit }
             });
         return response.data;
     } catch (err) {
@@ -69,7 +70,7 @@ export const retrivePostByUserId = async (userId) => {
 
 export const getPost = async (userId, page, limit) => {
     try {
-        const response = await axios.get(`${apiEndpoint}/all-posts/${userId}`, {
+        const response = await axios.get(`${apiEndpoint}/get-timeline-post/${userId}`, {
             params: { page: page, limit: limit }
         });
         return response.data;
@@ -81,6 +82,15 @@ export const getPost = async (userId, page, limit) => {
 export const deletePostById = async (postId) => {
     try {
         const response = await axios.delete(`${apiEndpoint}/delete/${postId}`);
+        return response.data;
+    } catch (err) {
+        return err.response.data.error;
+    }
+};
+
+export const deleteCommentByPostId = async (postId, commentId) => {
+    try {
+        const response = await axios.delete(`${apiEndpoint}/delete-comment/${postId}/${commentId}`);
         return response.data;
     } catch (err) {
         return err.response.data.error;

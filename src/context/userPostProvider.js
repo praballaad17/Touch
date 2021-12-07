@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect, createContext, useCallback } from 'react'
+import { getUserPhotosByUsername } from '../services/postServices';
 import { useSocket } from './socketProvider';
 
 const UserPostContext = createContext();
@@ -13,56 +14,35 @@ export function UserPostProvider({ children }) {
     const [hasMore, setMore] = useState(false)
     const [pageNumber, setPageNumber] = useState(1)
 
-    useEffect(() => {
-        console.log("in profile context");
-    }, [socket])
-
-    const addprofilepost = useCallback(({ posts, username }) => {
-        setProfilePost([...posts.result])
-        setAllProfilePost(prev => [...prev, { username, posts: posts.result }])
-        // setAllProfilePost(prev => {
-        //     let find = false;
-        //     prev.map(item => {
-        //         if (item.username === username) {
-        //             find = true
-        //             return item
-        //         }
-        //         return item
-        //     })
-        //     if (find) return prev
-        //     else return [...prev, { username, posts: rposts.result }]
-        // })
-        setLoading(false)
-        setMore(posts?.result.length > 0)
-    }, [setAllProfilePost, setProfilePost])
-
-    function getProfilePost(username, pageNumber) {
+    async function getProfilePost(username, pageNumber) {
+        console.log("get profile post");
         setLoading(true)
         let limit = 10
         let i = 0
         while (i < allProfilepost.length && allProfilepost[i].username !== username) {
             ++i
         }
-        if (i < allProfilepost.length) {
+        if (i < allProfilepost.length && profilePost.length <= (pageNumber * limit) && !hasMore) {
+            console.log(pageNumber);
+            // if ()
+            console.log(allProfilepost[i].posts.length);
             setLoading(false)
             return setProfilePost(allProfilepost[i].posts)
         }
         else {
-            console.log("get Post");
             try {
-                socket.emit('get-profile-post', { username, pageNumber, limit })
-
-                // return () => socket.off('receive-profile-post') 
+                const posts = await getUserPhotosByUsername(username, pageNumber, limit)
+                if (!posts.result.length) setMore(false)
+                setProfilePost(prev => [...prev, ...posts.result])
+                setAllProfilePost(prev => [...prev, { username, posts: posts.result }])
+                setMore(true)
+                setLoading(false)
             } catch (error) {
                 console.log(error);
             }
         }
     }
 
-    useEffect(() => {
-        if (socket == null) return
-        socket.on('receive-profile-post', addprofilepost)
-    }, [socket, addprofilepost])
 
     function addToAllProfilePost(username, post) {
         setAllProfilePost(prev => {
@@ -84,6 +64,25 @@ export function UserPostProvider({ children }) {
         })
     }
 
+    function removeFromAllProfilePost(username, id) {
+        setAllProfilePost(prev => {
+            let madeChange = false;
+            const newpost = prev.map(item => {
+                if (item.username === username) {
+                    madeChange = true
+                    return {
+                        ...item,
+                        posts: item.posts.filter(p => p._id != id)
+                    }
+                }
+                return item
+            })
+            if (madeChange) return newpost
+            else return prev
+        })
+        setProfilePost(profilePost.filter(p => p._id !== id))
+    }
+
     const value = {
         profilePost,
         setProfilePost,
@@ -94,7 +93,8 @@ export function UserPostProvider({ children }) {
         hasMore,
         setMore,
         loading,
-        addToAllProfilePost
+        addToAllProfilePost,
+        removeFromAllProfilePost
     }
 
     return (

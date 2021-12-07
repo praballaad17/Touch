@@ -16,8 +16,9 @@ export function NotificationProvider({ user, children }) {
 
     const getNotification = async () => {
         const noti = await getMentionNoti(user.username)
-        // console.log(noti);
-        setMention(noti.notification)
+
+        if (noti.lenght)
+            setMention(noti.notification)
     }
 
     // useEffect(() => {
@@ -41,7 +42,7 @@ export function NotificationProvider({ user, children }) {
         })
     }, [socket])
 
-    // console.log(allNoti, mention);
+    console.log(mention);
     const value = {
         allNoti,
         mention,

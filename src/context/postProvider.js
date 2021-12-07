@@ -1,11 +1,12 @@
 import React, { useContext, useState, useEffect, createContext, useCallback, useReducer } from 'react'
-import { getPostById } from '../services/postServices';
+import { getPost, getPostById, deleteCommentByPostId } from '../services/postServices';
 import { useSocket } from './socketProvider';
 
 const PostContext = createContext();
 export function usePost() {
     return useContext(PostContext)
 }
+
 export function PostProvider({ children }) {
     const socket = useSocket()
     const ACTION = {
@@ -58,16 +59,18 @@ export function PostProvider({ children }) {
 
 
     const addToSaveTimeline = useCallback((posts) => {
-        dispatch({ type: ACTION.ADD_POST, payload: { savedTimeline: posts, hasMore: posts.hasMore } })
+        let hasMore = true
+        if (!posts.result.length)  hasMore = false
+        dispatch({ type: ACTION.ADD_POST, payload: { savedTimeline: posts, hasMore: hasMore } })
+        setTimeline(prev => [...prev, ...posts.result])
     }, [dispatch])
 
-    const getTimeline = () => {
-        console.log("in timeline", socket);
+    const getTimeline = async (userId) => {
         if (socket == null) return
 
         dispatch({ type: ACTION.SET_LOAD, payload: { loading: true } })
         let i = 0, limit = 10
-        console.log(savedTimeline, pageNumber);
+    
         while (i < savedTimeline.length && savedTimeline[i].pageNumber !== pageNumber) {
             ++i
         }
@@ -76,32 +79,16 @@ export function PostProvider({ children }) {
         }
         else {
             try {
-                console.log("get timline");
-                socket.emit('get-timeline', { pageNumber, limit })
+                const responce = await getPost(userId, pageNumber, limit)
+                addToSaveTimeline(responce)
             } catch (error) {
                 console.log(error);
             }
         }
     }
 
-    useEffect(() => {
-        if (socket == null) return
-        socket.on('receive-timeline', addToSaveTimeline)
-    }, [socket, addToSaveTimeline])
-
-
-    useEffect(() => {
-        if (savedTimeline.length) {
-            savedTimeline.map(item => {
-                setTimeline(prev => [...prev, ...item.result])
-
-            })
-        }
-    }, [savedTimeline])
-
     const postFeed = (files, fileNames, postId, caption) => {
         if (socket == null) return
-        dispatch({ type: ACTION.SET_LOAD, payload: { loading: true } })
         try {
             socket.emit('post-feed', { files, fileNames, postId, caption })
         } catch (error) {
@@ -109,10 +96,58 @@ export function PostProvider({ children }) {
         }
     }
 
+    const addComment = (postId, comment) => {
+        if (socket == null) return
+       
+        socket.emit('add-comment', {postId, comment})
+        addCommentToPost(postId, comment)
+    }
+
+    const toggleLike = (liked, postId, userId) => {
+        if (socket == null) return
+            socket.emit('toggle-like', {liked, postId, userId} )
+    }
+
+    const addCommentToPost = (postId, comment) => {
+        setTimeline(prev => {
+            let madeChange = false;
+            const result = timeline.map(item => {
+                if (item._id === postId) {
+                    madeChange = true
+                    return {
+                        ...item,
+                        comments: [comment, ...item.comments]
+                    }
+                }
+                return item
+            })
+            if (madeChange) return result
+            else return prev 
+        })
+    }
+
+    const deleteComment = async (postId, commentId) => {
+        setTimeline(prev => {
+            let madeChange = false;
+            const newP = prev.map(item => {
+                if(item._id === postId) {
+                    madeChange = true
+                   return { 
+                       ...item,
+                    comments: item.comments.filter(c => c._id !== commentId)
+                    }
+                }
+                return item
+            })
+            if (madeChange) return newP
+            else return prev
+        })
+        await deleteCommentByPostId(postId, commentId)
+    }
+
     useEffect(() => {
         if (socket == null) return
         socket.on('receive-post', (post) => {
-            console.log("recived post");
             console.log(post);
             dispatch({ type: ACTION.ADD_RECIVED_POST, payload: { recievedPosts: post } })
         })
@@ -125,13 +160,11 @@ export function PostProvider({ children }) {
 
     const getPostFromTimeline = async (postId) => {
         let i = 0
-        console.log(postId);
         while (i < timeline.length && timeline[i]._id !== postId) {
             ++i
 
         }
         if (i < timeline.length) {
-            console.log(timeline[i]);
             return timeline[i]
         }
         else {
@@ -145,7 +178,7 @@ export function PostProvider({ children }) {
             }
         }
     }
-    console.log(timeline);
+    
     const value = {
         getPostFromTimeline,
         timeline,
@@ -157,7 +190,10 @@ export function PostProvider({ children }) {
         loading,
         postFeed,
         recievedPosts,
-        addRecivedToTimeline
+        addRecivedToTimeline,
+        addComment,
+        toggleLike,
+        deleteComment
     }
 
     return (

@@ -7,10 +7,21 @@ import ReactLoader from '../loader';
 import { useUserPost } from '../../context/userPostProvider';
 import { useUser } from '../../context/userProvider';
 
-export default function Profile({ user }) {
+export default function Profile({ username }) {
   const [followerCount, setfollowerCount] = useState()
-  const { profilePost, loading, setPageNumber, hasMore } = useUserPost()
-  const { user: loggedInUser } = useUser()
+  const [user, setUser] = useState()
+  const { profilePost, loading, pageNumber, setPageNumber, getProfilePost, hasMore } = useUserPost()
+  const { user: loggedInUser, users } = useUser()
+
+  useEffect(() => {
+    users.map(item => {
+      if (item.username === username) {
+        console.log(item);
+        setUser(item)
+      }
+    })
+
+  }, [users, username])
 
   const observer = useRef()
   const lastPostRef = useCallback(node => {
@@ -24,12 +35,12 @@ export default function Profile({ user }) {
     if (node) observer.current.observe(node)
   }, [loading, hasMore])
 
+
+
   useEffect(() => {
     setfollowerCount(user?.followers.length)
   }, [user])
-
-
-
+  console.log(hasMore, pageNumber);
   return (
     <>
       {user && <Header
@@ -45,10 +56,10 @@ export default function Profile({ user }) {
           {profilePost.length ?
             (profilePost.map((content, index) => {
               if (profilePost.length === index + 1) {
-                return <Post postref={lastPostRef} key={content?._id} content={content} userProfileImg={user?.displayImg.profileImg} />
+                return <Post postref={lastPostRef} key={index} content={content} userProfileImg={user?.displayImg.profileImg} />
               }
               else {
-                return <Post key={content?._id} content={content} userProfileImg={user?.displayImg.profileImg} />
+                return <Post key={index} content={content} userProfileImg={user?.displayImg.profileImg} />
               }
             })
             ) : (

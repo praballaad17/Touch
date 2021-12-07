@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import BlankPost from './blankPost';
 
-export default function Image({ fileNumber, caption, postId, files, author }) {
+export default function Image({ fileNumber, postId, files, author }) {
   const [counter, setCounter] = useState(0)
   const [loading, setLoading] = useState(false)
 
@@ -21,9 +19,9 @@ export default function Image({ fileNumber, caption, postId, files, author }) {
       <div className="image-slider__box">
         <div className={`${fileNumber == 2 || fileNumber == 3 || fileNumber == 4 ? `image-slider__box-left-${fileNumber}` : "image-slider__box-left"}`}>
           {files.map((item, index) => (<>
-            {index < 2 ? <Link to={`/${author}/${postId}/${index + 1}`} className={`${fileNumber == 2 || fileNumber == 4 || fileNumber == 3 ? `image-slider__box-img-${fileNumber}` : "image-slider__box-img"}`}>
+            {index < 2 ? <Link to={`/${author}/${postId}/${index + 1}`}  key={index}
+            className={`${fileNumber == 2 || fileNumber == 4 || fileNumber == 3 ? `image-slider__box-img-${fileNumber}` : "image-slider__box-img"}`}>
               <img
-                // className={`${fileNumber == 2 || fileNumber == 4 || fileNumber == 3 ? `image-slider__box-img-${fileNumber}` : "image-slider__box-img"}`} 
                 className="image-slider__box-img-nor"
                 src={item} alt="files" />
             </Link> : <></>}
@@ -33,7 +31,7 @@ export default function Image({ fileNumber, caption, postId, files, author }) {
 
         {fileNumber > 2 ? <div className={`${fileNumber == 4 ? "image-slider__box-right-2" : "image-slider__box-right-3"}`}>
           {files.map((item, index) => (<>
-            {index > 1 ? <Link to={`/${author}/${postId}/${index + 1}`}><img className={`${fileNumber == 4 ? `image-slider__box-img-${fileNumber}` : "image-slider__box-img-r3"}`} src={item} alt="files" /></Link> : <></>}
+            {index > 1 ? <Link to={`/${author}/${postId}/${index + 1}`} key={index}><img className={`${fileNumber == 4 ? `image-slider__box-img-${fileNumber}` : "image-slider__box-img-r3"}`} src={item} alt="files" /></Link> : <></>}
 
           </>)
           )}
