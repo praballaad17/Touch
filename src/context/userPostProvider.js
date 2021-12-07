@@ -22,7 +22,7 @@ export function UserPostProvider({ children }) {
         while (i < allProfilepost.length && allProfilepost[i].username !== username) {
             ++i
         }
-        if (i < allProfilepost.length && profilePost.length <= (pageNumber * limit) && !hasMore) {
+        if (i < allProfilepost.length) {
             console.log(pageNumber);
             // if ()
             console.log(allProfilepost[i].posts.length);
@@ -32,10 +32,10 @@ export function UserPostProvider({ children }) {
         else {
             try {
                 const posts = await getUserPhotosByUsername(username, pageNumber, limit)
-                if (!posts.result.length) setMore(false)
-                setProfilePost(prev => [...prev, ...posts.result])
+                // if (!posts.result.length) setMore(false)
+                setProfilePost([ ...posts.result])
                 setAllProfilePost(prev => [...prev, { username, posts: posts.result }])
-                setMore(true)
+                // setMore(true)
                 setLoading(false)
             } catch (error) {
                 console.log(error);
@@ -82,6 +82,8 @@ export function UserPostProvider({ children }) {
         })
         setProfilePost(profilePost.filter(p => p._id !== id))
     }
+
+    console.log(profilePost,allProfilepost );
 
     const value = {
         profilePost,
