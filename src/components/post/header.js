@@ -6,12 +6,12 @@ import { Link } from 'react-router-dom';
 // import { deletePostById } from '../../services/postServices';
 import PostModal from './postModal';
 
-export default function Header({ user, content, setProfile, photosCollection }) {
+export default function Header({ user, content, linkToUser, photosCollection }) {
   const [isModal, setModal] = useState(false)
   return (
     <div className="post__header">
 
-      <Link to={`/user/${user?.username}`} className="post__header-info">
+      <Link onClick={linkToUser} to={`/user/${user?.username}`} className="post__header-info">
         <div className="u-bold post__header-name">{user?.fullName}</div>
         <p className="post__header-username">@{user?.username}</p>
       </Link>

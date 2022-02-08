@@ -1,0 +1,60 @@
+.noti {
+    padding: 1rem;
+
+    &__tab {
+        display: flex;
+        width: 100%;
+        display: flex;
+        border-bottom: 1px solid $color-grey-light-2;
+        &-item {
+            width: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem 0;
+            color: $color-black;
+            &:hover {
+                background-color: $color-grey-light-1;
+            }
+            &-active {
+                border-bottom: 5px solid $color-tertiary-light;
+            }
+        }
+    }
+}
+
+.mennoti {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid $color-grey-light-2;
+    &__img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    &__con {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        &__head{
+            display: flex;
+            align-items: center;
+           
+            & > a {
+                color: $color-grey-dark-3;
+                font-size: 2rem;
+                font-weight: bold;
+                &:last-child {
+                    margin-left: 10px;
+                    font-weight: normal;
+                }
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+}

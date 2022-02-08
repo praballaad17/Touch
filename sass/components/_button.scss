@@ -5,7 +5,9 @@
     text-transform: uppercase;
     text-decoration: none;
     padding: 1rem 2rem;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 10rem;
     transition: all 0.2s;
     position: relative;
@@ -39,9 +41,17 @@
     }
   }
 
+  &--tertiary {
+    background-color: $color-tertiary-light;
+    color: $color-white;
+    width: fit-content;
+    font-weight: bold;
+  }
+
   &--grey {
     background-color: $color-grey-light-2;
-    color: $color-white;
+    color: $color-black;
+    font-weight: bold;
 
     &::after {
       background-color: $color-grey-dark-2;
@@ -97,4 +107,20 @@
   }
 
   
+}
+.btn-follow {
+  background-color: $color-tertiary-dark;
+  color: $color-white;
+  border-radius: 10px;
+  border: none;
+  padding: 1rem;
+  margin-left: 1rem;
+  cursor: pointer;
+  &-f {
+    background-color: $color-grey-light-2;
+    color: $color-grey-dark-3;
+}
+&-u {
+
+}
 }

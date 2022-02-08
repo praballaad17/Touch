@@ -8,6 +8,7 @@
     height: 100vh;
     background-color: rgba($color-black, 0.2);
     z-index: 1000;
+   
     }
 
     &-box{
@@ -18,12 +19,16 @@
         transform: translate(-50%, -50%);
         z-index: 1000;
         border-radius: 1rem;
-
+        overflow: hidden;
         &__heading{
-            margin: 2rem 7rem;
+            margin: 2rem;
+            display: flex;
+            align-self: center;
+            justify-content: center;
         }
         &__list{
             text-align: center;
+            list-style: none;
         }
         &__item{
             border-top:1px solid rgba($color-grey, 0.4) ;
@@ -34,4 +39,140 @@
         }
         }
     }
+
+    &-newconv{
+        width: 60rem;
+        min-height: 48.8rem;
+        max-height: 90vh;
+        position: fixed;
+        top: 50vh;  
+        left: 50vw;
+        background-color: $color-white;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        border-radius: 1rem;
+
+        @include respond(phone) {
+            top: 0;  
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            transform: none;
+            max-height: none;
+            border-radius: 0px;
+        }
+
+        &__heading{
+            margin: 1rem 2rem;
+            display: flex;
+            align-items: center;
+
+            &-main {
+                display: flex;
+                flex-grow: 1;
+                font-size: 2rem;
+                font-weight: bold;
+                align-items: center;
+            }
+        }
+        
+        &__search {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid $color-grey-light-2;
+
+            &-box {
+                display: flex;
+                padding: 0.5rem 2rem;
+                align-items: center;
+
+            }
+
+            &-input {
+                flex-grow: 1;
+                border-bottom: none;
+                margin-left: 2rem;
+                &:focus-visible {
+                    outline: none;
+                }
+            }
+
+            &-selected {
+                display: flex;
+                flex-wrap: wrap;
+                &-user {
+                    display: flex;
+                    border: 1px solid $color-grey;
+                    border-radius: 50px;
+                    align-items: center;
+                    margin: 1rem 0 0 1rem;
+                    padding: 0 5px;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: $color-tertiary-light;
+                    }
+                }
+                &-img {
+                    width: 2rem;
+                    height: 2rem;
+                    border-radius: 50%;
+                    display: inline-block;
+                }
+                &-icon {
+                    margin-left:1rem ;
+                }
+            }
+        }
+
+        &__result {
+            display: flex;
+            flex-direction: column;
+            overflow-y: scroll;
+
+            &-user { 
+                display: flex;
+                padding: 1rem 2rem;
+                &:hover {
+                    background-color: $color-grey-light-2;
+                }
+                &-img{
+                    width: 5rem;
+                    height: 5rem;
+                    border-radius: 50%;
+                    display: inline-block;
+                }
+
+                &-info{
+                    display: flex;
+                    flex-direction: column;
+                    padding: 0 2rem;
+
+                    &-username {
+                        color: $color-grey-dark-3;
+                        line-height: 2rem;
+                    }
+                }
+            }
+        } 
+    }
+}
+
+.progress {
+
+    &__box {
+        width: 40rem;
+        position: relative;
+    }
+
+    &-bar{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 50%;
+    background-color: $color-tertiary-light;
+    border-radius: 0.2rem;
+    animation: wave2 2s linear infinite;
+  }
 }

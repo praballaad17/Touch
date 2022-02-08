@@ -1,5 +1,5 @@
 import { faArrowLeft, faSearch } from '@fortawesome/free-solid-svg-icons';
-import { Switch, } from 'react-router-dom';
+import { Link, Switch, } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
@@ -18,7 +18,7 @@ export default function Timeline({ setShow, user }) {
     document.title = 'Home | Touch';
   }, []);
   const { user: loggedInUser } = useUser()
-  const { getTimeline, timeline, loading, hasMore, pageNumber, setPageNumber, recievedPosts, addRecivedToTimeline } = usePost()
+  const { getTimeline, timeline, loading, hasMore, pageNumber, setPageNumber, recievedPosts, addRecivedToTimeline, node, setNode } = usePost()
   const [searchToggle, setSearchToggle] = useState(false)
   // const [show, setShow] = useState(false) 
 
@@ -31,7 +31,6 @@ export default function Timeline({ setShow, user }) {
     if (loading) return
     if (observer.current) observer.current.disconnect()
     observer.current = new IntersectionObserver(entries => {
-      console.log(hasMore);
       if (entries[0].isIntersecting && hasMore) {
         setPageNumber(prePage => prePage + 1)
       }
@@ -39,13 +38,19 @@ export default function Timeline({ setShow, user }) {
     if (node) observer.current.observe(node)
   }, [loading, hasMore])
 
+  const currentRef = useCallback(node => {
+    // if (node) {
+    //   node.scrollIntoView({ smooth: true })
+    // }
+  }, [node])
+
   return (
     <>
-      <Switch>
+      {/* <Switch>
         <ProtectedRoute path={ROUTES.FULLIMG} user={user}  >
           <FullImg user={user} />
         </ProtectedRoute>
-      </Switch>
+      </Switch> */}
       <div className="timeline">
 
         <div className="timeline__head">
@@ -73,16 +78,26 @@ export default function Timeline({ setShow, user }) {
         ) : (
           timeline?.map((content, index) => {
             if (timeline?.length === index + 1) {
-              return <Post key={index} postref={lastPostRef} key={content?._id} content={content} user={user} />
+              return (
+                // <Link to={`/${user?.username}/${content?._id}`}>
+                <Post key={index} postref={lastPostRef} key={content?._id} content={content} user={user} />
+                // </Link>
+              )
             }
             else {
-              return <Post key={index} content={content} user={user} />
+              return (
+                // <Link to={`/${user?.username}/${content?._id}`}>
+                <Post key={index} postref={currentRef} content={content} user={user} />
+                // </Link>
+              )
             }
           })
         )}
-        <div className="timeline__loading">{loading && (
-          <ReactLoader />
-        )}</div>
+        <div className="timeline__loading">
+          {loading && (
+            <ReactLoader />
+          )}
+        </div>
         {/* <div>{error && 'Error'}</div> */}
       </div>
     </>

@@ -86,7 +86,7 @@ export function UserProvider({ user, children }) {
     const getProfileImg = async (username) => {
         let i = 0
 
-        while (i < usersProfileImgs.length && usersProfileImgs[i].user.username !== username ) {
+        while (i < usersProfileImgs.length && usersProfileImgs[i].user.username !== username) {
             ++i
         }
         if (i < usersProfileImgs.length) {

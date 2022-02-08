@@ -2,29 +2,30 @@ import { useEffect, useState } from "react";
 import { usePost } from "../../context/postProvider";
 import { useUser } from "../../context/userProvider";
 
-export default function PostFooter({ setShowC , postId, likes}) {
+export default function PostFooter({ setShowC, postId, likes }) {
   const [liked, setLiked] = useState(false)
-  const {user: loggedInUser, userId} = useUser()
-  const {toggleLike, timeline, setTimeline} = usePost()
-    
+  const { user: loggedInUser, userId } = useUser()
+  const { toggleLike, timeline, setTimeline } = usePost()
+
   useEffect(() => {
     if (likes.includes(userId)) {
       setLiked(true)
     }
-  },[likes])
+  }, [likes])
 
   const handleLike = (e) => {
     e.preventDefault()
+    e.stopPropagation();
     setLiked(prev => !prev)
-    toggleLike(!liked,postId, loggedInUser?._id )
-  
-    if(!liked) {
+    toggleLike(!liked, postId, loggedInUser?._id)
+
+    if (!liked) {
       let chlikes = [...likes]
-       chlikes.push(userId)
+      chlikes.push(userId)
       setTimeline(prev => {
         let madeChange = false;
         const newTimeline = prev.map(item => {
-          if(item._id === postId) {
+          if (item._id === postId) {
             madeChange = true;
             return {
               ...item,
@@ -40,7 +41,7 @@ export default function PostFooter({ setShowC , postId, likes}) {
       setTimeline(prev => {
         let madeChange = false;
         const newTimeline = prev.map(item => {
-          if(item._id === postId) {
+          if (item._id === postId) {
             madeChange = true;
             return {
               ...item,
@@ -53,13 +54,13 @@ export default function PostFooter({ setShowC , postId, likes}) {
         else return prev
       })
     }
-    
+
   }
 
   return (
     <div className="post__footer">
-      <div className="u-icon" onClick={handleLike} ><i className={`${!liked ? 'far' : 'fas u-color-pink' } fa-heart`}></i></div>
-      <div className="u-icon" onClick={() => setShowC(prev => !prev)}><i className="far fa-comment"></i></div>
+      <div className="u-icon" onClick={handleLike} ><i className={`${!liked ? 'far' : 'fas u-color-pink'} fa-heart`}></i></div>
+      <div className="u-icon" onClick={(e) => { e.stopPropagation(); setShowC(prev => !prev) }}><i className="far fa-comment"></i></div>
     </div>
   );
 }

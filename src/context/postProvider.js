@@ -9,6 +9,7 @@ export function usePost() {
 
 export function PostProvider({ children }) {
     const socket = useSocket()
+    const [node, setNode] = useState()
     const ACTION = {
         ADD_POST: 'add-post',
         SET_LOAD: 'set-load',
@@ -193,7 +194,9 @@ export function PostProvider({ children }) {
         addRecivedToTimeline,
         addComment,
         toggleLike,
-        deleteComment
+        deleteComment,
+        node, 
+        setNode
     }
 
     return (

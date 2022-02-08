@@ -6,6 +6,12 @@
     width: 25rem;
     z-index: 1000;
     background-color: $color-white;
+    overflow-y: scroll;
+
+    @include respond(tab-land) {
+        width: 42rem;
+        padding-top: 1rem;
+    }
 
     &__close{
         width: 4rem;
@@ -30,12 +36,53 @@
         &:hover{
             background-color: $color-grey-light-2;
         }
+
+        @include respond(tab-port) {
+            margin: 1.5rem 0;
+            padding: 0.5rem 2rem;
+        }
+    }
+
+    &__name {
+        margin-top: 2rem;
+        font-size: 3rem;
+        font-weight: bold;
+        line-height: 3rem;
+        margin-left: 1rem;
+        @include respond(tab-port) {
+            margin-top: 2rem;
+        font-size: 2.5rem;
+        font-weight: bold;
+        line-height: 2.5rem;
+        margin-left: 0.5rem;
+        }
+    }
+
+    &__username {
+        color: $color-grey;
+        line-height: 3rem;
+        margin-left: 1rem;
+        @include respond(tab-port) {
+        line-height: 2.5rem;
+        margin-left: 0.5rem;
+        }
+    }
+
+    &__counts {
+        display: flex;
+        margin-top: 2rem;
+        
+        & > div:last-child {
+            margin-left: 1rem;
+        }
     }
 
     &__link{
-        display: flex;
-    align-items: center;
-
+        font-size: 2.5rem;
+        color: currentColor;
+        @include respond(tab-port) {
+            font-size: 2.5rem;
+        }
     
     &--icon{
         width: 32px;
@@ -50,7 +97,6 @@
     }
     &--text{
         display: inline-block;
-        font-size: 2rem;
         margin-left: 1.2rem;
     } 
     }

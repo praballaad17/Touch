@@ -1,15 +1,15 @@
 html {
   //define for 1rem
   @include respond(big) {
-    font-size: 70%;
+    font-size: 68%;
   }
-  font-size: 62.5%;
+  font-size: 61%;
 
   @include respond(tab-land) {
     font-size: 56.25%;
   }
   @include respond(tab-port) {
-    font-size: 50%;
+    font-size: 54%;
   }
   // @include respond(phone) {
   //   font-size: 30%;
@@ -42,8 +42,16 @@ html {
 
 body {
   box-sizing: border-box;
-
+  background-color: $color-white;
   @include respond(tab-port) {
     margin: 0rem;
   }
+input {
+  border: none;
+  height: 30px;
+  font-size: 1.7rem;
+}
+a {
+  text-decoration: none;
+}
 }

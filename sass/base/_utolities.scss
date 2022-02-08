@@ -1,11 +1,33 @@
-.u-center-text {
-  text-align: center !important;
+.u-flex-center {
+  display: flex;
+  // justify-content: center;
+  align-items: center;
+}
+.u-flex-all-center{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .u-margin-bottom-big {
   margin-bottom: 8rem !important;
 
   @include respond(tab-port) {
     margin-bottom: 5rem !important;
+  }
+}
+.u-center-text{ 
+  text-align: center;
+}
+.u-text-decor-none {
+  text-decoration: none;
+}
+.u-display-phone {
+  display: none;
+
+  @include respond(phone) {
+    display: inline-block;
   }
 }
 .u-opacity-50 {
@@ -16,6 +38,13 @@
 }
 .u-text-red-bold{
   color: red;
+  font-weight: bold;
+  &:hover {
+    background-color: rgb(250, 115, 115);
+    color: $color-white;
+  }
+}
+.u-bold {
   font-weight: bold;
 }
 .u-margin-bottom-medium {
@@ -34,4 +63,27 @@
 }
 .u-margin-top-big {
   margin-top: 8rem !important;
+}
+
+.u-icon {
+  width: 3.6rem;
+  height: 3.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 2rem;
+
+  &:hover {
+      background-color: $color-grey-light-2;
+  }
+
+  @include respond(tab-port) {
+    width: 4rem;
+  height: 4rem;
+  font-size: 2.4rem;
+  }
+}
+.u-color-pink{
+  color: rgb(245, 109, 132);
 }

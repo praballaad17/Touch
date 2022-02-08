@@ -1,0 +1,47 @@
+.profile {
+    &__header {
+        display: flex;
+        padding: 2rem;
+        @include respond(phone) {
+            padding: 1rem;
+        }
+
+        &-imgbox {
+            width: 20rem;
+            height: 10rem;
+            cursor: pointer;
+            @include respond(phone) {
+            width: 12rem;
+            }
+        }
+        &-img {
+            width: 12rem;
+            height: 12rem;
+            border-radius: 50%;
+            object-fit: cover;
+            @include respond(phone) {
+                width: 10rem;
+                height: 10rem;
+            }
+        }
+        &-info {
+            display: flex;
+            flex-direction: column;
+            &-head {
+                display: flex;
+                align-items: center;
+
+            }
+            &-follow {
+                display: flex;
+                &-count {
+                    margin-right: 2rem;
+                    @include respond(phone) {
+                        margin-right: 1rem;
+                    }
+                }
+                
+            }
+        }
+    }
+}

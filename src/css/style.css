@@ -614,7 +614,12 @@ body {
   box-shadow: 0px 0px 2px 0px #a6a6a6;
   display: flex;
   padding: 1.5rem;
-  overflow: hidden; }
+  overflow: hidden;
+  color: black;
+  z-index: 10; }
+  .post:hover {
+    background-color: #f7f7f7;
+    cursor: pointer; }
   .post__pimg {
     width: 5rem;
     height: 5rem;
@@ -630,12 +635,17 @@ body {
     align-items: center;
     font-size: 2rem;
     display: flex;
-    justify-content: space-between; }
+    justify-content: space-between;
+    z-index: 11; }
     .post__header-info {
       display: flex;
       color: #333; }
+      .post__header-info > div:hover {
+        text-decoration: underline; }
     .post__header-username {
       margin-left: 5px; }
+      .post__header-username:hover {
+        text-decoration: underline; }
   .post__text {
     white-space: pre-wrap;
     max-height: 22rem;
@@ -648,7 +658,8 @@ body {
     text-align: center;
     align-items: center;
     padding: 0 2rem;
-    justify-content: space-around; }
+    justify-content: space-around;
+    z-index: 30; }
   .post__comments {
     min-height: 2rem;
     width: 100%; }
@@ -678,7 +689,8 @@ body {
 
 .image-slider {
   width: 100%;
-  max-height: 50rem; }
+  max-height: 50rem;
+  z-index: 20; }
   .image-slider__box {
     max-width: 100%;
     max-height: 50rem;
@@ -792,13 +804,14 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.9);
   width: 100vw;
   height: 100vh;
   display: flex;
   z-index: 30;
   display: flex;
-  justify-content: center; }
+  justify-content: center;
+  z-index: 201; }
   .fullImg__icon {
     width: 3.6rem;
     height: 3.6rem;
@@ -831,8 +844,8 @@ body {
         height: 4rem;
         font-size: 2.4rem; } }
   .fullImg__imgbox {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100vw;
+    height: 100vh;
     display: flex;
     justify-content: center; }
     @media (max-width: 37.5em) {
@@ -840,10 +853,10 @@ body {
         align-items: center; } }
     .fullImg__imgbox > img {
       max-width: 100%;
-      height: auto; }
-      @media (max-width: 37.5em) {
-        .fullImg__imgbox > img {
-          height: fit-content; } }
+      max-height: 100%;
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain; }
 
 .comment__post {
   display: flex;
@@ -1369,10 +1382,11 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; }
+    justify-content: center;
+    overflow: hidden; }
     @media (max-width: 56.25em) {
       .login__box {
-        width: 100%; } }
+        width: 90%; } }
     .login__box--sub {
       display: flex;
       flex-direction: column;
@@ -1384,7 +1398,8 @@ body {
       box-shadow: 0 0 10px 10px #f7f7f7; }
       @media (max-width: 56.25em) {
         .login__box--sub {
-          max-width: 50rem; } }
+          max-width: 50rem;
+          width: unset; } }
     .login__box--head {
       display: flex;
       justify-content: center;
@@ -1405,7 +1420,9 @@ body {
       border: 2px solid #f7f7f7;
       border-radius: .5rem;
       margin: 1rem;
-      padding: 0.5rem; }
+      padding: 2rem;
+      font-size: 20px;
+      line-height: 25px; }
 
 .message {
   display: flex;

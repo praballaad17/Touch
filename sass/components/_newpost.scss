@@ -9,8 +9,8 @@
     &__main{
         padding: 1rem;
         border-bottom: 2px solid $color-grey-light-2;
-        
     }
+    
     &__input-text{
         width: 100%;
         height: 13rem;
@@ -23,13 +23,27 @@
             border: none;
             outline: none;
         }
+        
     }
-    &__media > svg{
-        width: 3rem !important;
-        height: 3rem;
+    &__media { 
+        
+        & > svg{
+            width: 3rem !important;
+            height: 3rem;
 
-        &:hover{
-            color:aqua;
+            
+
+            &:hover{
+                color:aqua;
+            }
+        }
+        &-disabled {
+            & > svg{
+            color: $color-grey-dark-2;
+            &:hover{
+                color:$color-grey-dark-2;
+            }
+        }
         }
     }
 } 

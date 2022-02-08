@@ -40,7 +40,7 @@ export default function Profile({ username }) {
   useEffect(() => {
     setfollowerCount(user?.followers.length)
   }, [user])
-  console.log(hasMore, pageNumber);
+  
   return (
     <>
       {user && <Header

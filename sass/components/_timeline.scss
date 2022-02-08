@@ -1,4 +1,6 @@
 .timeline{
+    height: 100%;
+    overflow-y: scroll;
     &__head{
         height: 6rem;
         position: sticky;
@@ -10,10 +12,23 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        font-size: 2rem;
+        
+        &--profile {
+            @include respond(big){
+                display: none;
+            }
+            @include respond(phone){
+                display: inline-block;
+            }
+        }
         
         &--search{
             display: flex;
             align-items: center;
+            @include respond(phone) {
+                width: 85%;
+            }
             &btn {
                 @include respond(big){
                     display: none;
@@ -23,6 +38,22 @@
                 }
                 }
         }
+
         
     }
-}
+    &__loading{
+        display: flex;
+        justify-content: center;
+    }
+    &__unseen {
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: $color-tertiary-light;
+        cursor: pointer;
+        &:hover {
+            background-color: $color-grey-light-1;
+        }
+    } 
+} 

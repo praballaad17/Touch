@@ -1,6 +1,7 @@
 .dashboard{
     display: flex;
     width: 100%;
+    height: 100vh;
     justify-content: center;
     margin: auto;
 
@@ -13,6 +14,9 @@
     @include respond(tab-land) {
         width: 100%;
     }
+    @include respond(phone) {
+        height: 100vh;
+    }
   
     &__leftbar{
         width: 30rem;
@@ -20,6 +24,7 @@
         position: sticky;
         top: 0;
         z-index: 20;
+        flex-shrink: 0;
 
         @include respond(tab-land) {
             display: flex;
@@ -39,15 +44,16 @@
 
     @include respond(phone){
         display: inline;
-        position: fixed;
+        position: absolute;
         bottom: 0;
+        left: 0;
         z-index: 100;
     }
 }
 
 
     &__main{
-        width: 70rem;
+       flex-grow: 1;
         border: 2px solid $color-grey-light-2;
         z-index: 10;
 
@@ -60,6 +66,7 @@
         }
         @include respond(phone) {
             width: 100vw;
+            border: none;
         }
     }
 
@@ -83,13 +90,21 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: sticky;
+    position: absolute;
     bottom: 0;
+    left: 0;
     width: 100vw;
     height: 8vh;
     padding: 0 2rem;
 
     &__link--icon{
+        color: $color-grey-dark-3;
         font-size: 3rem;
+        
     }
+}
+
+.profile {
+    height: 100%;
+    overflow-y: scroll;
 }

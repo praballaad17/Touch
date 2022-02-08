@@ -11,3 +11,4 @@ export const TIMELINE = '/home';
 export const CONVERSATION = '/messages/:groupid';
 export const GROUPINFO = '/messages/:groupid/info';
 export const FULLIMG = '/:username/:postId/:fileNumber';
+export const FULLPOST = '/:username/:postId';

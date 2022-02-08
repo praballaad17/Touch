@@ -10,8 +10,9 @@ import NotFound from './not-found';
 import { useConversations } from '../context/conversationProvider';
 import { useUser } from '../context/userProvider';
 import ProtectedRoute from '../helpers/protected-route';
-import FullImg from '../components/post/fullImg';
 import { useNotifications } from '../context/notificationProvider';
+import FullPost from '../components/post/FullPost';
+import FullImg from '../components/post/fullImg';
 // import MainLoader from '../loader/mainLoader';
 
 const Notification = lazy(() => import('../components/notification/notification'));
@@ -84,15 +85,18 @@ export default function Dashboard({ user }) {
             <ProtectedRoute path={ROUTES.NOTIFIACATION} user={user}   >
               <Notification />
             </ProtectedRoute>
+            <ProtectedRoute path={ROUTES.FULLIMG} user={user}  >
+              <FullImg user={user} />
+            </ProtectedRoute>
             <ProtectedRoute path={ROUTES.NEWPOST} user={user}   >
               <Newpost />
+            </ProtectedRoute>
+            <ProtectedRoute path={ROUTES.FULLPOST} user={user}  >
+              <FullPost user={user} />
             </ProtectedRoute>
             <ProtectedRoute path={ROUTES.DASHBOARD} user={user}   >
               <Timeline setShow={setShow} />
             </ProtectedRoute>
-            {/* <ProtectedRoute path={ROUTES.FULLIMG} user={user}  >
-              <FullImg user={user} />
-            </ProtectedRoute> */}
             {/* <Route path={ROUTES.NEWPOST} component={Newpost} /> */}
             {/* <Route path={ROUTES.TIMELINE} component={Timeline} /> */}
             <Redirect from={ROUTES.DASHBOARD} to={ROUTES.TIMELINE} />

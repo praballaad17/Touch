@@ -7,15 +7,17 @@ export default function Login({ user: loggedInUser }) {
   const location = useLocation()
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false)
 
   const [error, setError] = useState('');
   const isInvalid = password === '' || emailAddress === '';
 
   const handleLogin = async (event) => {
     event.preventDefault();
-
+    setLoading(true)
     try {
       await login(emailAddress, password);
+      setLoading(false)
       window.location = "/"
     } catch (error) {
       setEmailAddress('');
@@ -35,6 +37,12 @@ export default function Login({ user: loggedInUser }) {
     <div className="login">
 
       <div className="login__box">
+        {loading ? <ul className="modal-box__list">
+          <li className="progress__box">
+            <span class="progress-bar"></span>
+          </li>
+          {/* <li className="modal-box__item" >{progress}</li> */}
+        </ul> : <></>}
         <div className="login__box--sub">
           <h1 className="login__box--head">
             Touch

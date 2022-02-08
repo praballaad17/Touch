@@ -34,7 +34,6 @@ export default function Profile() {
         <div className="u-flex-all-center"><ReactLoader /></div>
       ) : (
         <div className="profile">
-
           <UserProfile username={username} setPageNumber={setPageNumber} />
         </div>
       )

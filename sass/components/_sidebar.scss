@@ -6,21 +6,37 @@
 
 .link-list{
     padding-right: 2rem;
+    list-style: none;
     @include respond(tab-land) {
         padding-right: 0rem;
     }
     &--proImg{
-        width: 4rem;
-        height: 4rem;
+        width: 5rem;
+        height: 5rem;
         border-radius: 50%;
         display: inline-block;
+
+        &--small {
+            border-radius: 50%;
+            display: inline-block;
+            width: 4rem;
+            height: 4rem;
+        }
+        @include respond(tab-port) { 
+            width: 6rem;
+            height: 6rem;
+        }
     }
     &-item{
         margin: 1rem 0;
         border-radius: 5rem;
         padding: 0.5rem 1rem;
+        font-size: 2rem;
+        text-decoration: none;
 
         @include respond(tab-land) {
+            font-size: 3rem;
+            margin: 2rem 0;
             padding: 0rem 0rem;
             border-radius: 50%;
         }
@@ -38,21 +54,30 @@
             background-color: $color-grey-light-2;
         }
     }
-
-    
-
 }
 
 .link{
     display: flex;
     align-items: center;
-
+    text-decoration: none;
+    color: currentColor;
     
     &--icon{
-        width: 32px;
-        height: 32px;
+        width: 40px;
+        height: 40px;
         display: inline-block;
         text-align: center;
+        position: relative;;
+        &-top {
+            position: absolute;
+            top: -5px;
+            right: 0;
+            color: $color-white;
+            background-color: $color-danger;
+            border-radius: 50%;
+            padding: 0 5px;
+            font-size: 15px;
+        }
     
     & > svg {
         width: 32px;

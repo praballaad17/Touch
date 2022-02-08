@@ -1,6 +1,7 @@
 .login{
     display: flex;
     height: 100vh;
+    justify-content: center;
     &__hero{
         width: 50%;
         display: flex;
@@ -22,9 +23,10 @@
         flex-direction: column;
         align-items: center;
         justify-content: center; 
+        overflow: hidden;
         
         @include respond(tab-port) {
-            width: 100%;
+            width: 90%;
         }
 
 
@@ -35,9 +37,11 @@
          border: 1px solid $color-grey-light-1;
          border-radius: 1rem;
          background-color: $color-white;
-
+        width: 50rem;
+        box-shadow: 0 0 10px 10px $color-grey-light-1;
          @include respond(tab-port) {
             max-width: 50rem;
+            width: unset;
         }
      }
 
@@ -62,14 +66,16 @@
     &__form{
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: center;  
 
         &--input{
         width: 100%;
         border: 2px solid $color-grey-light-1;
         border-radius: .5rem;
         margin: 1rem;
-        padding: 0.5rem;
+        padding: 2rem;
+        font-size: 20px;
+        line-height: 25px;
     }
 }
 }

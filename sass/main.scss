@@ -17,5 +17,10 @@
 @import "components/search";
 @import "components/loading";
 
+@import "layouts/mainloader";
+@import "layouts/notification";
+
 @import "pages/dashboard";
 @import "pages/login";
+@import "pages/message";
+@import "pages/profile";

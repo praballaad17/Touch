@@ -83,6 +83,7 @@ export default function Newpost() {
                 files, fileNames: subfilesName, _id: postId,
                 caption, fileNumber: files.length, author: loggedInUser.username,
                 comments: [],
+                likes: []
             }
             setTimeline(prevPost => [data, ...prevPost])
             addToAllProfilePost(loggedInUser?.username, data)
@@ -108,7 +109,7 @@ export default function Newpost() {
         }
 
 
-    }, [filePreviw , caption])
+    }, [filePreviw, caption])
 
     useEffect(() => {
         if (filePreviw.length === 4) {

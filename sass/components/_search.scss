@@ -24,7 +24,7 @@
         }
 
         @include respond(tab-port){
-            width: 65rem;
+            width: 90%;
             max-width: 65rem!important;
         }
         @include respond(phone){
@@ -36,7 +36,6 @@
         width: 25rem;
         height: 2rem;
         margin-left: 0.5rem;
-        background-color: $color-grey-light-1;
             &:focus-visible{
                 outline: none;
             }
@@ -45,12 +44,14 @@
                 max-width: 65rem!important;
             }
             @include respond(phone){
-                width: 90vw;
+                width: 90%;
                 max-width: 90vw!important;
             }
+          
     }
     
     &-result{
+        display: inline-block;
         background-color: $color-white;
         width: 28rem;
         max-height: 40rem;
@@ -66,7 +67,7 @@
             top: 5.4rem;
         }
         @include respond(phone){
-            width: 90vw;
+            width: 85%;
             max-width: 90vw!important;
         }
        
