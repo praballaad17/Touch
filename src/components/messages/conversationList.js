@@ -26,6 +26,12 @@ export default function ConversationList() {
         let input = document.querySelector('.convlist__search-input')
         input.value = ""
     }
+
+    const formatDate = (dateString) => {
+        const options = { year: "numeric", month: "short", day: "numeric" }
+        return new Date(dateString).toLocaleDateString(undefined, options)
+    }
+    console.log(formatDate("2021-11-22T03:59:53.069Z"));
     return (
         <div className="convlist">
             <div className="convlist__head">
@@ -77,12 +83,15 @@ export default function ConversationList() {
                 {!onsearch && <div className="convlist__list">
                     {conversations.map(conversation => (
                         <>
-                            {/* {console.log(conversation.messages[conversation.messages.length - 1])} */}
+                            {console.log(conversation.messages[conversation.messages.length - 1])}
                             <div className="convlist__list-conv" onClick={() => setSelectedConversationGroupId(conversation._id)}>
                                 <img className="convlist__list-conv-img" src={DEFAULT_IMAGE_PATH} alt="profile-img" />
                                 <div className="convlist__list-conv__cont">
-                                    <div className="convlist__list-conv__mem">{conversation.members.map(user => <div>&nbsp;{user.fullName},</div>)}</div>
+                                    <div className="convlist__list-conv__mem">{conversation.members.map(user => <>&nbsp;{user.fullName},</>)}</div>
                                     <div>{conversation.messages[conversation.messages.length - 1]?.text}</div>
+                                </div>
+                                <div className='convlist__list-conv__time'>
+                                    <time dateTime={conversation.messages[conversation.messages.length - 1]?.date} >{formatDate(conversation.messages[conversation.messages.length - 1]?.date)}</time>
                                 </div>
                             </div>
                         </>

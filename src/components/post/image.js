@@ -16,17 +16,12 @@ export default function Image({ fileNumber, postId, files, author }) {
     setCounter(counter - 1)
   }
 
-  const linkToUser = (event, index) => {
-    event.stopPropagation();
-    history.push(`/${author}/${postId}/${index + 1}`)
-  }
-
   return (
     <div className="image-slider">
       <div className="image-slider__box">
         <div className={`${fileNumber == 2 || fileNumber == 3 || fileNumber == 4 ? `image-slider__box-left-${fileNumber}` : "image-slider__box-left"}`}>
           {files.map((item, index) => (<>
-            {index < 2 ? <Link onClick={(event) => linkToUser(event, index)} to={`/${author}/${postId}/${index + 1}`} key={index}
+            {index < 2 ? <Link to={`/${author}/${postId}/${index + 1}`} key={index}
               className={`${fileNumber == 2 || fileNumber == 4 || fileNumber == 3 ? `image-slider__box-img-${fileNumber}` : "image-slider__box-img"}`}>
               <img
                 className="image-slider__box-img-nor"
@@ -38,7 +33,7 @@ export default function Image({ fileNumber, postId, files, author }) {
 
         {fileNumber > 2 ? <div className={`${fileNumber == 4 ? "image-slider__box-right-2" : "image-slider__box-right-3"}`}>
           {files.map((item, index) => (<>
-            {index > 1 ? <Link onClick={(event) => linkToUser(event, index)} to={`/${author}/${postId}/${index + 1}`} key={index}><img className={`${fileNumber == 4 ? `image-slider__box-img-${fileNumber}` : "image-slider__box-img-r3"}`} src={item} alt="files" /></Link> : <></>}
+            {index > 1 ? <Link to={`/${author}/${postId}/${index + 1}`} key={index}><img className={`${fileNumber == 4 ? `image-slider__box-img-${fileNumber}` : "image-slider__box-img-r3"}`} src={item} alt="files" /></Link> : <></>}
 
           </>)
           )}

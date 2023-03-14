@@ -9,7 +9,7 @@ import ProgressModal from '../newpost/progressModal';
 import { uploadFileToStorage } from '../../services/resizeService';
 import CommentPost from './commentPost';
 
-export default function PostComments({ comments, postId }) {
+export default function PostComments({ comments, postId, author }) {
   const [comment, setComment] = useState("")
   const [filePreviw, setFilePreviw] = useState([])
   const [subfiles, setSubfiles] = useState([])
@@ -20,35 +20,35 @@ export default function PostComments({ comments, postId }) {
   const { addComment } = usePost()
 
   const resizeFile = (file) =>
-  new Promise((resolve) => {
+    new Promise((resolve) => {
       Resizer.imageFileResizer(file, 640, 480, "JPEG", 100, 0, (uri) => resolve(uri), "file");
-  });
+    });
 
-const handleFileUpload = async (e) => {
-  if (!e.target.files.length) return;
-  if (subfiles.length === 4) return;
-  const file = e.target.files[0]
-  const resizeImage = await resizeFile(file);
-  setFilePreviw(prevFile => [...prevFile, URL.createObjectURL(resizeImage)])
-  const filename = uuidV4()
-  setSubfiles(prevFiles => [...prevFiles, resizeImage])
-  setSubfilesName(prevFilename => [...prevFilename, filename])
-}
-const handleFileCross = (name) => {
-  const index = filePreviw.indexOf(name)
-  setFilePreviw(filePreviw.filter(item => item !== name))
-  subfiles.splice(index, 1)
-  subfilesName.splice(index, 1)
-}
+  const handleFileUpload = async (e) => {
+    if (!e.target.files.length) return;
+    if (subfiles.length === 4) return;
+    const file = e.target.files[0]
+    const resizeImage = await resizeFile(file);
+    setFilePreviw(prevFile => [...prevFile, URL.createObjectURL(resizeImage)])
+    const filename = uuidV4()
+    setSubfiles(prevFiles => [...prevFiles, resizeImage])
+    setSubfilesName(prevFilename => [...prevFilename, filename])
+  }
+  const handleFileCross = (name) => {
+    const index = filePreviw.indexOf(name)
+    setFilePreviw(filePreviw.filter(item => item !== name))
+    subfiles.splice(index, 1)
+    subfilesName.splice(index, 1)
+  }
   const handelSubmit = async (e) => {
     let files = [];
-        // setUploading(true)
-        setpgModal(true)
-        for (let i = 0; i < subfiles.length; i++) {
-            console.log("in loop");
-            const fileurl = await uploadFileToStorage(subfiles[i], `/file/${loggedInuser?.username}/${postId}/${subfilesName[i]}`)
-            files.push(fileurl)
-        }
+    // setUploading(true)
+    setpgModal(true)
+    for (let i = 0; i < subfiles.length; i++) {
+      console.log("in loop");
+      const fileurl = await uploadFileToStorage(subfiles[i], `/file/${loggedInuser?.username}/${postId}/${subfilesName[i]}`)
+      files.push(fileurl)
+    }
 
     const data = {
       _id: uuidV4(),
@@ -63,7 +63,7 @@ const handleFileCross = (name) => {
       }
     }
     e.preventDefault()
-    addComment(postId, data)
+    addComment(postId, data, author)
     setComment("")
     setpgModal(false)
   }
@@ -75,7 +75,7 @@ const handleFileCross = (name) => {
           <UploadPreview files={filePreviw} onChange={handleFileCross} />
         </div>
         <div className="post__comments__add-com">
-          
+
           <Link to={`/user/${loggedInuser?.username}`} className="post__side" >
             <img className="post__pimg" src={loggedInuser?.displayImg.profileImg} alt="profile" />
           </Link>
@@ -91,15 +91,15 @@ const handleFileCross = (name) => {
           </div>
         </div>
 
-        {pgModal ? <ProgressModal open={pgModal} onClose={() => setpgModal(false)} />: <></>}
+        {pgModal ? <ProgressModal open={pgModal} onClose={() => setpgModal(false)} /> : <></>}
         {comments && comments.length ? comments.map((comment, index) => (
           <div key={index}>
             <CommentPost key={index} comment={comment} postId={postId} />
           </div>
-        )): ""}
-        
+        )) : ""}
+
       </div>
-      
+
     </>
   );
 }

@@ -575,7 +575,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 2rem; }
+    font-size: 2rem;
+    z-index: 100; }
     @media (max-width: 112.5em) {
       .timeline__head--profile {
         display: none; } }
@@ -1387,6 +1388,8 @@ body {
     @media (max-width: 56.25em) {
       .login__box {
         width: 90%; } }
+    .login__box--error {
+      color: red; }
     .login__box--sub {
       display: flex;
       flex-direction: column;
@@ -1516,7 +1519,8 @@ body {
   .convlist__list {
     display: flex;
     flex-grow: 1;
-    flex-direction: column; }
+    flex-direction: column;
+    overflow-y: scroll; }
     .convlist__list-conv {
       display: flex;
       padding: 1rem; }
@@ -1526,12 +1530,22 @@ body {
         width: 5rem;
         height: 5rem;
         border-radius: 50%;
-        margin: 0 1rem; }
+        margin: 0 1rem;
+        flex-grow: 1; }
       .convlist__list-conv__cont {
         display: flex;
         flex-direction: column; }
       .convlist__list-conv__mem {
-        display: flex; }
+        display: flex;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis; }
+      .convlist__list-conv__time {
+        display: flex;
+        align-items: flex-start;
+        flex-grow: 2; }
   .convlist__loading {
     display: flex;
     justify-content: center;

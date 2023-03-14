@@ -29,6 +29,9 @@
             width: 90%;
         }
 
+        &--error {
+            color: $color-danger; 
+        }
 
         &--sub{
          display: flex;

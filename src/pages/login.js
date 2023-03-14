@@ -23,6 +23,7 @@ export default function Login({ user: loggedInUser }) {
       setEmailAddress('');
       setPassword('');
       setError(error.message);
+      setLoading(false)
     }
   };
 

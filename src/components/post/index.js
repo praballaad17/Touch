@@ -16,7 +16,6 @@ export default function Post({ content, postref, setProfile, photosCollection })
 
   const { caption, author, fileNumber, _id, files, comments, likes } = content
 
-
   useEffect(() => {
     getUser(author)
   }, [author])
@@ -31,37 +30,28 @@ export default function Post({ content, postref, setProfile, photosCollection })
   }, [users, author])
 
   const handleOpenPost = (event) => {
-    console.log(event.target, event.currentTarget);
-    // if (event.target != event.currentTarget) {
-    //   return event.stopPropagation();
-    // }
-    console.log("stop");
-    history.push(`/${user?.username}/${_id}`)
+    console.log(event.target);
+    if (event.target == document.querySelector('.post__text') || event.target == document.querySelector('.post__main') || event.target == document.querySelector('.post')) {
+      history.push(`/${user?.username}/${_id}`)
+    }
   }
-
-  const linkToUser = (event) => {
-    event.stopPropagation();
-    history.push(`/user/${user?.username}`)
-  }
-
-
 
 
   return (
     <div style={{ "zIndex": "10" }} onClick={handleOpenPost}>
       {/* <Link to={`/${user?.username}/${_id}`}> */}
       <div ref={postref} className="post" >
-        <Link onClick={linkToUser} to={`/user/${user?.username}`} className="post__side" >
+        <Link to={`/user/${user?.username}`} className="post__side" >
           <img className="post__pimg" src={profileImg} alt="profile" />
         </Link>
         <div className="post__main">
-          <Header linkToUser={linkToUser} content={content} user={user} setProfile={setProfile} photosCollection={photosCollection} />
+          <Header content={content} user={user} setProfile={setProfile} photosCollection={photosCollection} />
           <div className="post__text">
             {caption}
           </div>
           <Image files={files} author={author} fileNumber={fileNumber} postId={_id} />
           <PostFooter setShowC={setShowC} postId={_id} likes={likes} />
-          {showC ? <PostComments comments={comments} postId={_id} /> : <></>}
+          {showC ? <PostComments author={user._id} comments={comments} postId={_id} /> : <></>}
         </div>
       </div>
       {/* </Link> */}

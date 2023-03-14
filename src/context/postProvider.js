@@ -61,7 +61,7 @@ export function PostProvider({ children }) {
 
     const addToSaveTimeline = useCallback((posts) => {
         let hasMore = true
-        if (!posts.result.length)  hasMore = false
+        if (!posts.result.length) hasMore = false
         dispatch({ type: ACTION.ADD_POST, payload: { savedTimeline: posts, hasMore: hasMore } })
         setTimeline(prev => [...prev, ...posts.result])
     }, [dispatch])
@@ -71,7 +71,7 @@ export function PostProvider({ children }) {
 
         dispatch({ type: ACTION.SET_LOAD, payload: { loading: true } })
         let i = 0, limit = 10
-    
+
         while (i < savedTimeline.length && savedTimeline[i].pageNumber !== pageNumber) {
             ++i
         }
@@ -97,19 +97,28 @@ export function PostProvider({ children }) {
         }
     }
 
-    const addComment = (postId, comment) => {
+    const addComment = (postId, comment, author) => {
         if (socket == null) return
-       
-        socket.emit('add-comment', {postId, comment})
+
+        socket.emit('add-comment', { postId, comment, author })
         addCommentToPost(postId, comment)
     }
 
+    useEffect(() => {
+        if (socket == null) return
+        socket.on('added-comment', (post) => {
+            console.log(post);
+            addCommentToPost(post?.postId, post?.comment)
+            // dispatch({ type: ACTION.ADD_RECIVED_POST, payload: { recievedPosts: post } })
+        })
+    }, [socket])
+
     const toggleLike = (liked, postId, userId) => {
         if (socket == null) return
-            socket.emit('toggle-like', {liked, postId, userId} )
+        socket.emit('toggle-like', { liked, postId, userId })
     }
 
-    const addCommentToPost = (postId, comment) => {
+    const addCommentToPost = useCallback((postId, comment) => {
         setTimeline(prev => {
             let madeChange = false;
             const result = timeline.map(item => {
@@ -123,19 +132,19 @@ export function PostProvider({ children }) {
                 return item
             })
             if (madeChange) return result
-            else return prev 
+            else return prev
         })
-    }
+    })
 
     const deleteComment = async (postId, commentId) => {
         setTimeline(prev => {
             let madeChange = false;
             const newP = prev.map(item => {
-                if(item._id === postId) {
+                if (item._id === postId) {
                     madeChange = true
-                   return { 
-                       ...item,
-                    comments: item.comments.filter(c => c._id !== commentId)
+                    return {
+                        ...item,
+                        comments: item.comments.filter(c => c._id !== commentId)
                     }
                 }
                 return item
@@ -179,7 +188,7 @@ export function PostProvider({ children }) {
             }
         }
     }
-    
+
     const value = {
         getPostFromTimeline,
         timeline,
@@ -195,7 +204,7 @@ export function PostProvider({ children }) {
         addComment,
         toggleLike,
         deleteComment,
-        node, 
+        node,
         setNode
     }
 
